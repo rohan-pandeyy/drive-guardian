@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function() {
     acceptButton.addEventListener('click', function() {
         overlay.style.display = 'none';
         background.style.filter = 'none';
-        image1.style.transform = 'translateX(-130px) scale(1.2)';
-        image2.style.transform = 'translateX(130px) scale(1.2)';
+        image1.classList.add('transformed');
+        image2.classList.add('transformed');
     });
 });

@@ -6,7 +6,7 @@ body, html {
 }
 
 .background {
-    background-image: url('./assets/bg.jpg');
+    background-image: url('./assets/bg.png');
     background-size: cover;
     background-position: center;
     position: absolute;
@@ -25,16 +25,20 @@ body, html {
     background-size: cover;
     background-repeat: no-repeat;
     transition: transform 2s ease-out;
-}
-
-.image1 {
-    background-image: url('./assets/bush_left.png');
     transform: translateX(0) scale(1);
+    background-image: url('./assets/bush_left.png');
 }
 
 .image2 {
-    background-image: url('./assets/bush_right.png');
-    transform: translateX(0) scale(1);
+    background-image: url('./assets/bush_right.png'); /* Move this line here */
+}
+
+.image1.transformed {
+    transform: translateX(-130px) scale(1.2);
+}
+
+.image2.transformed {
+    transform: translateX(130px) scale(1.2);
 }
 
 .overlay {
@@ -59,7 +63,7 @@ body, html {
 @keyframes slideDown {
     from {
         transform: translateY(-50px);
-        opacity: 0;
+        opacity: 0; 
     }
     to {
         transform: translateY(0);
