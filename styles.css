@@ -42,9 +42,9 @@ nav ul li a:hover {
 }
 
 .background {
-    background-image: url('./assets/bg.png');
-    background-size: cover;
-    background-position: center;
+    background-image: url('./assets/bg.png');  /* Update path to your background image */
+    background-size: cover; /* Stretch image to cover the container */
+    background-position: center; /* Center the image */
     position: absolute;
     z-index: -1000;
     width: 100%;
@@ -62,13 +62,15 @@ nav ul li a:hover {
 }
 
 .image1, .image2 {
-    width: 28%;
+    width: 28vw; /* Adjust the value for desired bush size */
     height: 100%;
     background-size: cover;
     background-repeat: no-repeat;
     transition: transform 2s ease-out;
     transform: translateX(0) scale(1);
     background-image: url('./assets/bush_left.png');
+    margin-left: -5%;  /* Move bushes slightly left */
+    margin-right: 2%;
 }
 
 .image2 {
@@ -88,6 +90,7 @@ nav ul li a:hover {
     justify-content: center;
     margin: 25%;
 }
+
 
 .gradient-button {
     background: linear-gradient(to right, rgb(255, 179, 0), rgb(255, 204, 0));

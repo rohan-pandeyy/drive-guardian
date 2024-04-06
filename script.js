@@ -12,3 +12,4 @@ document.addEventListener("DOMContentLoaded", function() {
         image2.classList.add('transformed');
     });
 });
+
