@@ -48,7 +48,7 @@ nav ul li a:hover {
     position: absolute;
     z-index: -1000;
     width: 100%;
-    height: 100%;
+    height: 100vh;
     filter: blur(10px);
     animation: slideDown 0.5s ease forwards;
     display: flex;
@@ -62,15 +62,23 @@ nav ul li a:hover {
 }
 
 .image1, .image2 {
-    width: 28vw; /* Adjust the value for desired bush size */
-    height: 100%;
+    width: 28vw;
+    height: 100vh;
     background-size: cover;
     background-repeat: no-repeat;
     transition: transform 2s ease-out;
     transform: translateX(0) scale(1);
     background-image: url('./assets/bush_left.png');
-    margin-left: -5%;  /* Move bushes slightly left */
-    margin-right: 2%;
+}
+
+@media (max-aspect-ratio: 16/10) { 
+    .image1 { margin-left: -5%; }
+    .image2 { margin-right: 2%; }
+}
+
+@media (min-aspect-ratio: 16/9) {
+    .image1 { margin-left: 0%; }
+    .image2 { margin-right: 3%; }
 }
 
 .image2 {
