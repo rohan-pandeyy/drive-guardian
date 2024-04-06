@@ -2,7 +2,6 @@ body, html {
     margin: 0;
     padding: 0;
     height: 100%;
-    overflow: hidden;
     font-family: 'Segoe UI', sans-serif;
 }
 
@@ -42,13 +41,14 @@ nav ul li a:hover {
 }
 
 .background {
-    background-image: url('./assets/bg.png');  /* Update path to your background image */
-    background-size: cover; /* Stretch image to cover the container */
-    background-position: center; /* Center the image */
+    background-image: url('./assets/bg.png');
+    background-size: contain;
+    background-position: center;
     position: absolute;
     z-index: -1000;
     width: 100%;
     height: 100%;
+    overflow: hidden;
     filter: blur(10px);
     animation: slideDown 0.5s ease forwards;
     display: flex;
@@ -62,15 +62,13 @@ nav ul li a:hover {
 }
 
 .image1, .image2 {
-    width: 28vw; /* Adjust the value for desired bush size */
-    height: 100%;
+    width: 28vw;
+    height: 100vh;
     background-size: cover;
     background-repeat: no-repeat;
     transition: transform 2s ease-out;
     transform: translateX(0) scale(1);
     background-image: url('./assets/bush_left.png');
-    margin-left: -5%;  /* Move bushes slightly left */
-    margin-right: 2%;
 }
 
 .image2 {
@@ -82,15 +80,14 @@ nav ul li a:hover {
 }
 
 .image2.transformed {
-    transform: translateX(130px) scale(1.2);
+    transform: translateX(100px) scale(1.2);
 }
 
 .buttons-container {
     display: flex;
     justify-content: center;
-    margin: 25%;
+    margin-top: 25%;
 }
-
 
 .gradient-button {
     background: linear-gradient(to right, rgb(255, 179, 0), rgb(255, 204, 0));
@@ -115,7 +112,7 @@ nav ul li a:hover {
     display: flex;
     justify-content: center;
     align-items: center;
-}   
+}
 
 .popup {
     background-color: white;
@@ -145,4 +142,15 @@ nav ul li a:hover {
     border-radius: 5px;
     cursor: pointer;
     margin-top: 20px;
+}
+
+#about {
+    padding: 20px;
+    text-align: center;
+    z-index: 1000;
+    background-color: aliceblue;
+}
+
+#about h2 {
+    margin-bottom: 15px;
 }

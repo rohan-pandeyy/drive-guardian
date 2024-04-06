@@ -13,3 +13,13 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 
+window.addEventListener('scroll', function() {
+    var scrollPosition = window.scrollY;
+
+    // Adjust the factor (20) to control the speed of movement
+    var image1Transform = "translateX(-" + scrollPosition / 20 + "px)";
+    var image2Transform = "translateX(" + scrollPosition / 20 + "px)";
+
+    image1.style.transform = image1Transform;
+    image2.style.transform = image2Transform;
+});
