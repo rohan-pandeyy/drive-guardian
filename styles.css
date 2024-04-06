@@ -5,6 +5,35 @@ body, html {
     overflow: hidden;
 }
 
+nav {
+    background-color: #333;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+nav ul li {
+    display: inline;
+}
+
+nav ul li a {
+    display: inline-block;
+    padding: 10px 20px;
+    color: white;
+    text-decoration: none;
+}
+
+nav ul li a:hover {
+    background-color: #555;
+}
+
 .background {
     background-image: url('./assets/bg.png');
     background-size: cover;
