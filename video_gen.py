@@ -162,33 +162,35 @@ def process_image(image):
 
 #     cap.release()
 #     cv2.destroyAllWindows()
-def process_video_realtime(input_source):
-    cap = cv2.VideoCapture(input_source) 
+def process_video_realtime(input_video_path):
+    cap = cv2.VideoCapture(input_video_path)
 
     while True:
         ret, frame = cap.read()
         if not ret:
             break
 
-        processed_frame = process_image(frame)
+        processed_frame = process_image(frame)  # Assume you have a function for processing
 
-        cv2.imshow('Lane Detection', processed_frame)
+        # Encode the frame as JPEG for efficient transmission
+        _, encoded_image = cv2.imencode('.jpg', processed_frame)
 
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+        # Send the encoded frame as a response
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + bytearray(encoded_image) + b'\r\n')
 
     cap.release()
     cv2.destroyAllWindows()
 
 # Get input from the user 
-input_type = input("Enter 'v' for video file or 'w' for webcam: ")
+#input_type = input("Enter 'v' for video file or 'w' for webcam: ")
 
-if input_type.lower() == 'v':
-    input_file_name = input("Enter video file name: ")
-    input_video_path = input_file_name + '.mp4'    
-    process_video_realtime(input_video_path)
+# #if input_type.lower() == 'v':
+#     input_file_name = input("Enter video file name: ")
+#     input_video_path = input_file_name + '.mp4'    
+#     process_video_realtime(input_video_path)
 
-elif input_type.lower() == 'w':
-    process_video_realtime(0)  # 0 for webcam
-else:
-    print("Invalid input. Please enter 'v' or 'w'.")
+# elif input_type.lower() == 'w':
+#     process_video_realtime(0)  # 0 for webcam
+# else:
+#     print("Invalid input. Please enter 'v' or 'w'.")

@@ -10,8 +10,15 @@ def root():
 
 @app.route('/video_stream')
 def video_stream():
-    return Response(process_video_realtime('project_video.mp4'),
-        mimetype='multipart/x-mixed-replace; boundary=frame')
+    filename = request.args.get("filename")
+    type = request.args.get("type")
+    print(filename,type)
+    if type == 'v':
+        return Response(process_video_realtime(filename),
+            mimetype='multipart/x-mixed-replace; boundary=frame')
+    elif type == 'w':
+        return Response(process_video_realtime(1),
+            mimetype='multipart/x-mixed-replace; boundary=frame')
 
 if __name__ == '_main_':
     app.run(host='0.0.0.0', port=5000)  # Adjust host and port as needed

@@ -72,6 +72,19 @@ fileInput.addEventListener('change', (event) => {
     // You might want to clear the selection or handle the error appropriately
     } else {
         console.log("Selected MP4 file name:", selectedFileName);
+        fileInput.addEventListener('change', (event) => {
+    const selectedFile = event.target.files[0];
+    selectedFileName = selectedFile.name;
+    const fileExtension = selectedFileName.split('.').pop().toLowerCase();
+    if (fileExtension !== 'mp4') {
+        alert("Please select an MP4 file.");
+    // You might want to clear the selection or handle the error appropriately
+    } else {
+        console.log("Selected MP4 file name:", selectedFileName);
+        window.location.href = `http://localhost:5000/video_stream?filename=${selectedFileName}&type=v`;
+    // ... your code to handle the selected MP4 file ...
+    }
+});
     // ... your code to handle the selected MP4 file ...
     }
 });
