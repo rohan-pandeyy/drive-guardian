@@ -1,3 +1,4 @@
+
 body, html {
     margin: 0;
     padding: 0;
@@ -76,7 +77,7 @@ nav ul li a:hover {
     .image2 { margin-right: 2%; }
 }
 
-@media (min-aspect-ratio: 16/9) {
+@media (min-aspect-ratio: 16/10) {
     .image1 { margin-left: 0%; }
     .image2 { margin-right: 3%; }
 }

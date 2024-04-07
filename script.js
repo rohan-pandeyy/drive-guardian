@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", function() {
     var overlay = document.querySelector('.overlay');
     var acceptButton = document.getElementById('acceptButton');

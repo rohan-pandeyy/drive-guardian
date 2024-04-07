@@ -6,13 +6,74 @@
     <title>Drive Guardian</title>
     <link rel="stylesheet" href="./styles.css">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <style>
+        /* Your CSS styles */
+        .team-details {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            opacity: 0; /* Initially hidden */
+            animation: fadeIn 0.5s ease forwards; /* Animation for fade in */
+            z-index: 999; /* Ensure it's on top of other content */
+        }
+
+        .team-details h1 {
+            margin-bottom: 20px;
+        }
+
+        .team-member {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .team-member img {
+            width: 100px; /* Adjust as needed */
+            border-radius: 50%; /* Rounded profile picture */
+            margin-right: 20px;
+        }
+
+        .team-member-details h2 {
+            margin: 0 0 5px;
+            font-size: 20px;
+        }
+
+        .team-member-details p {
+            margin: 0;
+            font-size: 16px;
+            color: #666;
+        }
+
+        /* CSS animation for fade in */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* CSS for close button */
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 24px;
+        }
+    </style>
 </head>
 <body>
     <nav>
         <ul>
             <li><a href="#">Home</a></li>
-            <li><a href="#">About</a></li>
-            <li><a href="team.html">Team</a></li>
+            <li><a href="#" id="aboutButton">About</a></li> <!-- Add id to the About button -->
+            <li><a href="#" id="teamButton">Team</a></li> <!-- Add id to the Team button -->
             <li><a href="#">Contact</a></li>
         </ul>
     </nav>
@@ -35,6 +96,83 @@
             <button class="gradient-button">Upload</button>
             <button class="gradient-button">Stream Live</button>
         </div>
+
+        <!-- Team details section (hidden by default) -->
+        <div id="teamContent" class="team-details" style="display: none;"> <!-- Empty div to load team.html content -->
+            <span class="close-button" id="closeTeamContent">&times;</span>
+            <h1>Team Details</h1>
+            <div class="team-member">
+                <img src="rohan.jpg" alt="Rohan Pandey Profile Picture">
+                <div class="team-member-details">
+                    <h2>Rohan Pandey</h2>
+                    
+                </div>
+            </div>
+            <div class="team-member">
+                <img src="dhruv.jpg" alt="Dhruv Kumar Profile Picture">
+                <div class="team-member-details">
+                    <h2>Dhruv Kumar</h2>
+                    
+                </div>
+            </div>
+            <div class="team-member">
+                <img src="shaurya.jpg" alt="Shaurya Singh Pundir Profile Picture">
+                <div class="team-member-details">
+                    <h2>Shaurya Singh Pundir</h2>
+                    
+                </div>
+            </div>
+            <div class="team-member">
+                <img src="sneha.jpg" alt="Sneha Choudhary Profile Picture">
+                <div class="team-member-details">
+                    <h2>Sneha Choudhary</h2>
+                    
+                </div>
+            </div>
+        </div>
+
+        <!-- About section (hidden by default) -->
+        <div id="aboutContent" class="team-details" style="display: none;"> <!-- Empty div to load about.html content -->
+            <span class="close-button" id="closeAboutContent">&times;</span>
+            <h1>About Us</h1>
+            <p>In our groundbreaking project, we're revolutionizing road safety with cutting-edge technology. By integrating live feeds from dashcam videos, we're creating a sophisticated real-time analysis system that goes beyond mere observation. Utilizing advanced algorithms, we not only detect objects but also predict potential hazards, providing drivers with crucial insights to navigate safely. What sets us apart is our seamless integration of upscaling techniques, enhancing the clarity and accuracy of the video feed for precise analysis. When an object veers too close, our system prompts drivers to take breaks, mitigating potential accidents and ensuring a smoother journey for all. This holistic approach to road safety isn't just about reacting to dangers; it's about proactively empowering drivers with the tools they need to stay safe on the road.</p>
+        </div>
+    </div>
+
     <script src="./script.js"></script>
+
+    <script>
+        // JavaScript to show team details when the "Team" button is clicked
+        document.addEventListener("DOMContentLoaded", function() {
+            var teamButton = document.getElementById('teamButton');
+            var teamContent = document.getElementById('teamContent');
+
+            teamButton.addEventListener('click', function(event) {
+                event.preventDefault(); // Prevent default link behavior
+                teamContent.style.display = 'block'; // Display the team content
+            });
+
+            // JavaScript to show about section when the "About" button is clicked
+            var aboutButton = document.getElementById('aboutButton');
+            var aboutContent = document.getElementById('aboutContent');
+
+            aboutButton.addEventListener('click', function(event) {
+                event.preventDefault(); // Prevent default link behavior
+                aboutContent.style.display = 'block'; // Display the about content
+            });
+
+            // JavaScript to close team details when the close button is clicked
+            var closeTeamContentButton = document.getElementById('closeTeamContent');
+            closeTeamContentButton.addEventListener('click', function() {
+                teamContent.style.display = 'none';
+            });
+
+            // JavaScript to close about section when the close button is clicked
+            var closeAboutContentButton = document.getElementById('closeAboutContent');
+            closeAboutContentButton.addEventListener('click', function() {
+                aboutContent.style.display = 'none';
+            });
+        });
+    </script>
 </body>
-</html>
+</
