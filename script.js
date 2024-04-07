@@ -55,3 +55,23 @@ document.addEventListener("DOMContentLoaded", function() {
         aboutContent.style.display = 'none';
     });
 });
+
+const uploadButton = document.querySelector('.gradient-button');
+const fileInput = document.getElementById('fileInput');
+
+uploadButton.addEventListener('click', () => {
+  fileInput.click(); // Trigger file input click
+});
+
+fileInput.addEventListener('change', (event) => {
+    const selectedFile = event.target.files[0];
+    selectedFileName = selectedFile.name;
+    const fileExtension = selectedFileName.split('.').pop().toLowerCase();
+    if (fileExtension !== 'mp4') {
+        alert("Please select an MP4 file.");
+    // You might want to clear the selection or handle the error appropriately
+    } else {
+        console.log("Selected MP4 file name:", selectedFileName);
+    // ... your code to handle the selected MP4 file ...
+    }
+});
