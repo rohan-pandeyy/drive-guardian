@@ -2,7 +2,7 @@
 
 Welcome to the Drive Guardian project repository! Here, we're dedicated to revolutionizing road safety through cutting-edge technology. Our project aims to enhance the safety of drivers and passengers alike by leveraging live feeds from dashcam videos and utilizing advanced algorithms for real-time analysis.
 
-[!Video Preview](assets/video.mp4)
+[!Video Preview](video.mp4)
 
 ## Project Overview
 In this groundbreaking project, we're not just observing the road; we're analyzing it comprehensively. Our system goes beyond mere object detection by predicting potential hazards, providing drivers with crucial insights to navigate safely. By seamlessly integrating upscaling techniques, we enhance the clarity and accuracy of the video feed, ensuring precise analysis.
