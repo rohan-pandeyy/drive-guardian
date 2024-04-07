@@ -1,0 +1,157 @@
+
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+nav {
+    background-color: none;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+nav ul li {
+    display: inline;
+}
+
+nav ul li a {
+    display: inline-block;
+    padding: 10px 20px;
+    color: white;
+    text-decoration: none;
+}
+
+nav ul li a:hover {
+    text-shadow: 0 0 5px rgba(0, 247, 255, 0.7);
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.background {
+    background-image: url('./assets/bg.png');
+    background-size: contain;
+    background-position: center;
+    position: absolute;
+    z-index: -1000;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    filter: blur(10px);
+    animation: slideDown 0.5s ease forwards;
+    display: flex;
+    justify-content: space-between;
+}
+
+.images-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.image1, .image2 {
+    width: 28vw;
+    height: 100vh;
+    background-size: cover;
+    background-repeat: no-repeat;
+    transition: transform 2s ease-out;
+    transform: translateX(0) scale(1);
+    background-image: url('./assets/bush_left.png');
+}
+
+.image2 {
+    background-image: url('./assets/bush_right.png');
+}
+
+.image1.transformed {
+    transform: translateX(-130px) scale(1.2);
+}
+
+.image2.transformed {
+    transform: translateX(100px) scale(1.2);
+}
+
+.buttons-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 25%;
+}
+
+.gradient-button {
+    background: linear-gradient(to right, rgb(255, 179, 0), rgb(255, 204, 0));
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    margin: 0 10px;
+    cursor: pointer;
+    font-size: 26px;
+}
+
+.gradient-button:hover {
+    box-shadow: 0 0 15px rgb(255, 187, 1);
+}
+
+.overlay {
+    background-color: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    animation: slideDown 1s ease forwards;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-50px);
+        opacity: 0; 
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+#acceptButton {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+#about {
+    padding: 20px;
+    text-align: center;
+    z-index: 1000;
+    background-color: aliceblue;
+}
+
+#about h2 {
+    margin-bottom: 15px;
+}
