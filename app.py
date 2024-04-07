@@ -17,7 +17,7 @@ def video_stream():
         return Response(process_video_realtime(filename),
             mimetype='multipart/x-mixed-replace; boundary=frame')
     elif type == 'w':
-        return Response(process_video_realtime(1),
+        return Response(process_video_realtime(0),
             mimetype='multipart/x-mixed-replace; boundary=frame')
 
 if __name__ == '_main_':
