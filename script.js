@@ -81,7 +81,7 @@ fileInput.addEventListener('change', (event) => {
     // You might want to clear the selection or handle the error appropriately
     } else {
         console.log("Selected MP4 file name:", selectedFileName);
-        window.location.href = `http://localhost:5000/video_stream?filename=${selectedFileName}&type=v`;
+        window.open(`http://127.0.0.1:5000/video_stream?filename=video.mp4&type=v`, '_blank');
     // ... your code to handle the selected MP4 file ...
     }
 });
