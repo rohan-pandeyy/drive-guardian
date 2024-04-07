@@ -145,15 +145,33 @@ def process_image(image):
     cv2.putText(result,'Vehicle is '+str(abs(round(center_diff,3)))+'m '+side_pos+' of center',(50,100), cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2) 
     return result
 
+# def process_video_realtime(input_video_path):
+#     cap = cv2.VideoCapture(input_video_path)
+
+#     while cap.isOpened():
+#         ret, frame = cap.read()
+#         if not ret:
+#             break
+
+#         processed_frame = process_image(frame)
+#         cv2.imwrite('frame1.png',processed_frame)
+        
+#         cv2.imshow('Lane Detection', processed_frame)
+#         if cv2.waitKey(1) & 0xFF == ord('q'):
+#             break
+
+#     cap.release()
+#     cv2.destroyAllWindows()
 def process_video_realtime(input_source):
     cap = cv2.VideoCapture(input_source) 
 
-    while cap.isOpened():
+    while True:
         ret, frame = cap.read()
         if not ret:
             break
 
         processed_frame = process_image(frame)
+
         cv2.imshow('Lane Detection', processed_frame)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -167,8 +185,9 @@ input_type = input("Enter 'v' for video file or 'w' for webcam: ")
 
 if input_type.lower() == 'v':
     input_file_name = input("Enter video file name: ")
-    input_video_path = input_file_name + '.mp4'
+    input_video_path = input_file_name + '.mp4'    
     process_video_realtime(input_video_path)
+
 elif input_type.lower() == 'w':
     process_video_realtime(0)  # 0 for webcam
 else:

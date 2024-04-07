@@ -162,7 +162,7 @@ nav ul li a:hover {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(255, 255, 255, 0.95);
     padding: 20px;
     border-radius: 10px;
     opacity: 0; /* Initially hidden */
@@ -215,4 +215,10 @@ nav ul li a:hover {
     right: 10px;
     cursor: pointer;
     font-size: 24px;
+}
+
+#video {
+    position: fixed;
+    inset: 1rem;
+    z-index: 100;
 }
