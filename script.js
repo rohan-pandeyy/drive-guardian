@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", function() {
     var overlay = document.querySelector('.overlay');
     var acceptButton = document.getElementById('acceptButton');
@@ -23,4 +22,36 @@ window.addEventListener('scroll', function() {
 
     image1.style.transform = image1Transform;
     image2.style.transform = image2Transform;
+});
+
+// JavaScript to show team details when the "Team" button is clicked
+document.addEventListener("DOMContentLoaded", function() {
+    var teamButton = document.getElementById('teamButton');
+    var teamContent = document.getElementById('teamContent');
+
+    teamButton.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent default link behavior
+        teamContent.style.display = 'block'; // Display the team content
+    });
+
+    // JavaScript to show about section when the "About" button is clicked
+    var aboutButton = document.getElementById('aboutButton');
+    var aboutContent = document.getElementById('aboutContent');
+
+    aboutButton.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent default link behavior
+        aboutContent.style.display = 'block'; // Display the about content
+    });
+
+    // JavaScript to close team details when the close button is clicked
+    var closeTeamContentButton = document.getElementById('closeTeamContent');
+    closeTeamContentButton.addEventListener('click', function() {
+        teamContent.style.display = 'none';
+    });
+
+    // JavaScript to close about section when the close button is clicked
+    var closeAboutContentButton = document.getElementById('closeAboutContent');
+    closeAboutContentButton.addEventListener('click', function() {
+        aboutContent.style.display = 'none';
+    });
 });

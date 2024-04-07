@@ -155,3 +155,64 @@ nav ul li a:hover {
 #about h2 {
     margin-bottom: 15px;
 }
+
+/* Your CSS styles */
+.team-details {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    opacity: 0; /* Initially hidden */
+    animation: fadeIn 0.5s ease forwards; /* Animation for fade in */
+    z-index: 999; /* Ensure it's on top of other content */
+}
+
+.team-details h1 {
+    margin-bottom: 20px;
+}
+
+.team-member {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.team-member img {
+    width: 100px; /* Adjust as needed */
+    height: 100px;
+    border-radius: 50%; /* Rounded profile picture */
+    margin-right: 20px;
+}
+
+.team-member-details h2 {
+    margin: 0 0 5px;
+    font-size: 20px;
+}
+
+.team-member-details p {
+    margin: 0;
+    font-size: 16px;
+    color: #666;
+}
+
+/* CSS animation for fade in */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* CSS for close button */
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 24px;
+}
