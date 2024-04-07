@@ -3,7 +3,6 @@ body, html {
     margin: 0;
     padding: 0;
     height: 100%;
-    overflow: hidden;
     font-family: 'Segoe UI', sans-serif;
 }
 
@@ -43,13 +42,14 @@ nav ul li a:hover {
 }
 
 .background {
-    background-image: url('./assets/bg.png');  /* Update path to your background image */
-    background-size: cover; /* Stretch image to cover the container */
-    background-position: center; /* Center the image */
+    background-image: url('./assets/bg.png');
+    background-size: contain;
+    background-position: center;
     position: absolute;
     z-index: -1000;
     width: 100%;
-    height: 100vh;
+    height: 100%;
+    overflow: hidden;
     filter: blur(10px);
     animation: slideDown 0.5s ease forwards;
     display: flex;
@@ -72,16 +72,6 @@ nav ul li a:hover {
     background-image: url('./assets/bush_left.png');
 }
 
-@media (max-aspect-ratio: 16/10) { 
-    .image1 { margin-left: -5%; }
-    .image2 { margin-right: 2%; }
-}
-
-@media (min-aspect-ratio: 16/10) {
-    .image1 { margin-left: 0%; }
-    .image2 { margin-right: 3%; }
-}
-
 .image2 {
     background-image: url('./assets/bush_right.png');
 }
@@ -91,15 +81,14 @@ nav ul li a:hover {
 }
 
 .image2.transformed {
-    transform: translateX(130px) scale(1.2);
+    transform: translateX(100px) scale(1.2);
 }
 
 .buttons-container {
     display: flex;
     justify-content: center;
-    margin: 25%;
+    margin-top: 25%;
 }
-
 
 .gradient-button {
     background: linear-gradient(to right, rgb(255, 179, 0), rgb(255, 204, 0));
@@ -124,7 +113,7 @@ nav ul li a:hover {
     display: flex;
     justify-content: center;
     align-items: center;
-}   
+}
 
 .popup {
     background-color: white;
@@ -154,4 +143,15 @@ nav ul li a:hover {
     border-radius: 5px;
     cursor: pointer;
     margin-top: 20px;
+}
+
+#about {
+    padding: 20px;
+    text-align: center;
+    z-index: 1000;
+    background-color: aliceblue;
+}
+
+#about h2 {
+    margin-bottom: 15px;
 }
