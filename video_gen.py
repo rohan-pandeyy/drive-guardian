@@ -182,15 +182,16 @@ def process_video_realtime(input_video_path):
     cap.release()
     cv2.destroyAllWindows()
 
-# Get input from the user 
-#input_type = input("Enter 'v' for video file or 'w' for webcam: ")
 
-# #if input_type.lower() == 'v':
-#     input_file_name = input("Enter video file name: ")
-#     input_video_path = input_file_name + '.mp4'    
-#     process_video_realtime(input_video_path)
+#Get input from the user 
+input_type = input("Enter 'v' for video file or 'w' for webcam: ")
 
-# elif input_type.lower() == 'w':
-#     process_video_realtime(0)  # 0 for webcam
-# else:
-#     print("Invalid input. Please enter 'v' or 'w'.")
+if input_type.lower() == 'v':
+     input_file_name = input("Enter video file name: ")
+     input_video_path = input_file_name + '.mov'    
+     process_video_realtime(input_video_path)
+
+elif input_type.lower() == 'w':
+     process_video_realtime(0)  # 0 for webcam
+else:
+     print("Invalid input. Please enter 'v' or 'w'.")
