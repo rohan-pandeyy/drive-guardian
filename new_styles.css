@@ -143,7 +143,7 @@ header nav:hover > a:not(:hover) {
     position: absolute;
     z-index: 2;
     bottom: 30%;
-    right: 38%;
+    right: 35%;
     width: 170px;
 }
 
