@@ -53,8 +53,10 @@
         <img src="assets/header.svg" class="title">
         <img src="assets/ground.svg" class="ground">
 
-        <a href="www.example.com" class="upload"><input type="image" src="assets/upload.svg" class="upload"></a>
-        <a href="www.example.com" class="stream"><input type="image" src="assets/stream.svg" class="stream"></a>
+        <input type="file" id="fileInput" style="display:none;">
+        <input type="image" src="assets/upload.svg" class="upload" onclick="document.getElementById('fileInput').click();">
+        
+        <input type="image" src="assets/stream.svg" class="stream" onclick="window.location.href='http://localhost:5000/video_stream?type=w'">
 
 
     </section>
