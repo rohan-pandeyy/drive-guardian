@@ -1,90 +1,89 @@
 document.addEventListener("DOMContentLoaded", function() {
     var overlay = document.querySelector('.overlay');
     var acceptButton = document.getElementById('acceptButton');
-    var background = document.querySelector('.background');
-    var image1 = document.querySelector('.image1');
-    var image2 = document.querySelector('.image2');
 
     acceptButton.addEventListener('click', function() {
         overlay.style.display = 'none';
-        background.style.filter = 'none';
-        image1.classList.add('transformed');
-        image2.classList.add('transformed');
     });
 });
 
-window.addEventListener('scroll', function() {
-    var scrollPosition = window.scrollY;
+const title = document.querySelector('.title')
+const leaf1 = document.querySelector('.leaf1')
+const leaf2 = document.querySelector('.leaf2')
+const bush1 = document.querySelector('.bush1')
+const bush2 = document.querySelector('.bush2')
+const upload = document.querySelector('.upload')
+const stream = document.querySelector('.stream')
 
-    // Adjust the factor (20) to control the speed of movement
-    var image1Transform = "translateX(-" + scrollPosition / 20 + "px)";
-    var image2Transform = "translateX(" + scrollPosition / 20 + "px)";
+document.addEventListener('scroll', function() {
+    let value = window.scrollY
+    const scaleExpo = Math.pow(1.0009, value);
+    const initialScale = 0.5;
+    // console.log(value)
+    title.style.marginTop = value * 1.1 + 'px'
 
-    image1.style.transform = image1Transform;
-    image2.style.transform = image2Transform;
+    leaf1.style.marginLeft = value *0.2 + 'px'
+    leaf1.style.transform = `scale(${scaleExpo})`;
+
+    leaf2.style.marginRight = value *0.2 + 'px'
+    leaf2.style.transform = `scale(${scaleExpo})`;
+
+    bush1.style.marginTop = -value * 1.3 + 'px'
+    bush1.style.transform = `scale(${scaleExpo})`;
+    
+    bush2.style.marginTop = -value * 1.3 + 'px'
+    bush2.style.transform = `scale(${scaleExpo})`;
+
+    const slantDistance = value * 0.3;
+    const maxScroll = 5000;
+    const scaleAntiLog = 1 - Math.pow(value / maxScroll, 0.4);
+    const scaleLog = 1 + Math.pow(value / maxScroll, 0.4);
+    initialScale + (1 - initialScale) * (Math.log(scrollY + 1) / Math.log(maxScroll + 1));
+
+    upload.style.transform = `translate(${slantDistance}px, -${slantDistance}px) scale(${scaleAntiLog})`;
+    stream.style.transform = `translate(${slantDistance}px, ${slantDistance}px) scale(${scaleLog})`;
 });
 
-// JavaScript to show team details when the "Team" button is clicked
-document.addEventListener("DOMContentLoaded", function() {
-    var teamButton = document.getElementById('teamButton');
-    var teamContent = document.getElementById('teamContent');
-
-    teamButton.addEventListener('click', function(event) {
-        event.preventDefault(); // Prevent default link behavior
-        teamContent.style.display = 'block'; // Display the team content
+window.addEventListener('scroll', () => {
+    const sections = document.querySelectorAll('section');
+    let currentSection = '';
+  
+    sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        if (pageYOffset >= sectionTop - sectionHeight / 3) {
+            currentSection = section.getAttribute('id');
+        }
     });
-
-    // JavaScript to show about section when the "About" button is clicked
-    var aboutButton = document.getElementById('aboutButton');
-    var aboutContent = document.getElementById('aboutContent');
-
-    aboutButton.addEventListener('click', function(event) {
-        event.preventDefault(); // Prevent default link behavior
-        aboutContent.style.display = 'block'; // Display the about content
-    });
-
-    // JavaScript to close team details when the close button is clicked
-    var closeTeamContentButton = document.getElementById('closeTeamContent');
-    closeTeamContentButton.addEventListener('click', function() {
-        teamContent.style.display = 'none';
-    });
-
-    // JavaScript to close about section when the close button is clicked
-    var closeAboutContentButton = document.getElementById('closeAboutContent');
-    closeAboutContentButton.addEventListener('click', function() {
-        aboutContent.style.display = 'none';
-    });
+    updateActiveLink(currentSection);
 });
 
-const uploadButton = document.querySelector('.gradient-button');
+function updateActiveLink(currentSection) {
+    const navLinks = document.querySelectorAll('header nav a');
+    navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + currentSection) {
+            link.classList.add('active');
+        }
+    });
+}
+
+const uploadButton = document.querySelector('.upload');
 const fileInput = document.getElementById('fileInput');
 
-uploadButton.addEventListener('click', () => {
-  fileInput.click(); // Trigger file input click
-});
+const handleFileInputChange = (event) => {
+    const selectedFile = event.target.files[0];
+    selectedFile = selectedFile.name;
+    const fileExtension = selectedFile.split('.').pop().toLowerCase();
+    if (fileExtension !== 'mp4') {
+        alert("Please select an MP4 file.");
+    } else {
+        console.log("Selected MP4 file name:", selectedFileName);
+        setTimeout(() => {
+            window.open(`http://127.0.0.1:5000/video_stream?filename=video_india.mov&type=v`, '_blank');
+            // ... your code to handle the selected MP4 file ...
+        }, 2000); // 2000 milliseconds = 2 seconds
+    }
+};
 
-fileInput.addEventListener('change', (event) => {
-    const selectedFile = event.target.files[0];
-    selectedFileName = selectedFile.name;
-    const fileExtension = selectedFileName.split('.').pop().toLowerCase();
-    if (fileExtension !== 'mp4') {
-        alert("Please select an MP4 file.");
-    // You might want to clear the selection or handle the error appropriately
-    } else {
-        console.log("Selected MP4 file name:", selectedFileName);
-        fileInput.addEventListener('change', (event) => {
-    const selectedFile = event.target.files[0];
-    selectedFileName = selectedFile.name;
-    const fileExtension = selectedFileName.split('.').pop().toLowerCase();
-    if (fileExtension !== 'mp4') {
-        alert("Please select an MP4 file.");
-    // You might want to clear the selection or handle the error appropriately
-    } else {
-        console.log("Selected MP4 file name:", selectedFileName);
-        window.open(`http://127.0.0.1:5000/video_stream?filename=video_india.mov&type=v`, '_blank');
-    // ... your code to handle the selected MP4 file ...
-    }
-});
-    // ... your code to handle the selected MP4 file ...
-    }
-});
+fileInput.addEventListener('change', handleFileInputChange);

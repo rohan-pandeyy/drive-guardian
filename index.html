@@ -5,19 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Drive Guardian</title>
     <link rel="stylesheet" href="./styles.css">
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="favicon.ico" type="image/x-icon"><link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Stick+No+Bills:wght@200..800&display=swap" rel="stylesheet">
+    <style>
+        ::-webkit-scrollbar {
+          width: 13px;
+        }
+    
+        ::-webkit-scrollbar-track {
+          box-shadow: inset 0 0 5px rgb(77, 242, 22);
+          border-radius: 10px;
+        }
+    
+        ::-webkit-scrollbar-thumb {
+          background: rgb(104, 158, 23);
+          border-radius: 10px;
+        }
+    
+        ::-webkit-scrollbar-thumb:hover {
+          background: rgb(25, 152, 25);
+        }
+      </style>
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><a href="./new_index.html">Home</a></li>
-            <li><a href="#" id="aboutButton">About</a></li> <!-- Add id to the About button -->
-            <li><a href="#" id="teamButton">Team</a></li> <!-- Add id to the Team button -->
-            <li><a href="#">Contact</a></li>
-        </ul>
-    </nav>
+    <header>
+        <nav>
+            <a href="#home" class="active">Home</a>
+            <a href="#about">About</a>
+            <a href="#" id="teamButton">Team</a>
+            <a href="#">Contact</a>
+        </nav>
+    </header>
 
-    <div class="container">
+    <section id="home" class="home">
         <div class="overlay">
             <div class="popup">
                 <h2>Disclaimer</h2>
@@ -25,57 +46,57 @@
                 <button id="acceptButton">Accept</button>
             </div>
         </div>
-        <div class="background">
-            <div class="images-container">
-                <div class="image1"></div>
-                <div class="image2"></div>
-            </div>
-        </div>
-        <video id="video" src="http://localhost:5000/video_stream"></video>
-        <div class="buttons-container">
-            <button class="gradient-button">Upload</button>
-            <input type="file" id="fileInput" style="display: none;">
-            <button onclick="window.location.href='http://localhost:5000/video_stream?type=w'" class="gradient-button">Stream Live</button>
-        </div>
+        <img src="assets/landing-page/bush_left.svg" class="bush1">
+        <img src="assets/landing-page/bush_right.svg" class="bush2">
+        <img src="assets/landing-page/leaf_left.svg" class="leaf1">
+        <img src="assets/landing-page/road.svg" class="road">
+        <img src="assets/landing-page/leaf_right.svg" class="leaf2">
+
+        <img src="assets/landing-page/header.svg" class="title">
+        <img src="assets/landing-page/ground.svg" class="ground">
+
+        <input type="image" src="assets/landing-page/upload.svg" class="upload" onclick="document.getElementById('fileInput').click();">
+        <input type="file" id="fileInput" style="display:none;">
+        
+        <input type="image" src="assets/landing-page/stream.svg" class="stream" onclick="window.location.href='http://localhost:5000/video_stream?type=w'">
+    </section>
+
+    <section class="how-to-use">
+        <h1># How To Use</h1>
+        <div class="htu-container">
+          <div class="room-one">
+            <img src="./assets/how-to-use/how-to(1).png">
+            <p class="speech-bubble stream">STREAM</p>
+            <p class="description">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Excepturi, quaerat temporibus repellat odit ad maxime consectetur, aut non porro eos fugit, debitis a quis iste iure minima ducimus. Minus, iusto!
+            </p>
+          </div>
+          <div class="room-two">
+            <img src="./assets/how-to-use/how-to(2).png">
+            <p class="speech-bubble process">PROCESS</p>
+            <p class="description">
+              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Illum veniam sunt maxime consequatur, beatae placeat necessitatibus nostrum dolore architecto a laboriosam ut ex tempore quo? Exercitationem, placeat? Harum, tempora obcaecati.
+            </p>
+          </div>
+          <div class="room-three">
+            <img src="./assets/how-to-use/how-to(3).png">
+            <p class="speech-bubble observe">OBSERVE</p>
+            <p class="description">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae maiores tenetur illum quo dignissimos assumenda nihil doloremque totam molestiae, dolorum, repudiandae cumque delectus explicabo, placeat officia! Qui aperiam quis modi!
+            </p>
+          </div>
+        </div>        
+    </section>
+
+    <div class="s1d623h8f1">
+      <h2>
+        <span class="black">HOW IT WORKS</span>
+        <span class="white">HOW IT WORKS</span>
+      </h2>
     </div>
-    <!-- Team details section (hidden by default) -->
-    <div id="teamContent" class="team-details" style="display: none;"> <!-- Empty div to load team.html content -->
-        <span class="close-button" id="closeTeamContent">&times;</span>
-        <h1>Team : CodeBurglary</h1>
-        <div class="team-member">
-            <img src="rohan.jpg" alt="Rohan Pandey Profile Picture">
-            <div class="team-member-details">
-                <h2>Rohan Pandey</h2>
-                
-            </div>
-        </div>
-        <div class="team-member">
-            <img src="dhruv.jpg" alt="Dhruv Kumar Profile Picture">
-            <div class="team-member-details">
-                <h2>Dhruv Kumar</h2>
-                
-            </div>
-        </div>
-        <div class="team-member">
-            <img src="shaurya.jpg" alt="Shaurya Singh Pundir Profile Picture">
-            <div class="team-member-details">
-                <h2>Shaurya Singh Pundir</h2>
-                
-            </div>
-        </div>
-        <div class="team-member">
-            <img src="sneha.jpg" alt="Sneha Choudhary Profile Picture">
-            <div class="team-member-details">
-                <h2>Sneha Choudhary</h2>
-                
-            </div>
-        </div>
-    </div>
-    <div id="aboutContent" class="team-details" style="display: none;"> <!-- Empty div to load about.html content -->
-        <span class="close-button" id="closeAboutContent">&times;</span>
-        <h1>About Us</h1>
-        <p>In our groundbreaking project, we're revolutionizing road safety with cutting-edge technology. By integrating live feeds from dashcam videos, we're creating a sophisticated real-time analysis system that goes beyond mere observation. Utilizing advanced algorithms, we not only detect objects but also predict potential hazards, providing drivers with crucial insights to navigate safely. What sets us apart is our seamless integration of upscaling techniques, enhancing the clarity and accuracy of the video feed for precise analysis. When an object veers too close, our system prompts drivers to take breaks, mitigating potential accidents and ensuring a smoother journey for all. This holistic approach to road safety isn't just about reacting to dangers; it's about proactively empowering drivers with the tools they need to stay safe on the road.</p>
-    </div>
-    <script src="./script.js"></script>
+
+    <section class="how-it-works">
+    </section>
+    <script src="script.js"></script>
 </body>
 </html>
