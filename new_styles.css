@@ -153,14 +153,14 @@ header nav:hover > a:not(:hover):not(.active) {
     transition: transform 0.2s ease, filter 0.2s ease;
 }
 
-.how-it-works {
+.how-to-use {
     padding: 10vh;
-    background: linear-gradient(to top, #1e1e1e 40%, #4c4a4b);;
+    background: linear-gradient(to top, #27252f 40%, #4c4a4b);;
     color: white;
     position: relative;
 }
 
-.how-it-works h1 {
+.how-to-use h1 {
     text-align: center;
     font-family: "Stick No Bills", sans-serif;
     font-weight: bold;
@@ -168,27 +168,27 @@ header nav:hover > a:not(:hover):not(.active) {
     font-size: 40px;
 }
 
-.hiw-container {
+.htu-container {
     padding: 4vh 15vw;
     display: flex;
     justify-content: center;
     gap: 5vw;
 }
 
-.how-it-works img {
+.how-to-use img {
     width: 250px    ;
 }
 
-.how-it-works .room-one,
-.how-it-works .room-two,
-.how-it-works .room-three {
+.how-to-use .room-one,
+.how-to-use .room-two,
+.how-to-use .room-three {
     display: flex;
     flex-direction: column;
     -webkit-box-align: center;
     align-items: center;
 }
 
-.how-it-works .speech-bubble {
+.how-to-use .speech-bubble {
     margin: 2rem 0 1rem 0;
     border-radius: 20px;
     padding: 5px 15px;
@@ -197,19 +197,19 @@ header nav:hover > a:not(:hover):not(.active) {
     font-size: 20px;
 }
 
-.how-it-works .stream {
+.how-to-use .stream {
     border: 5px solid rgb(159, 202, 89);
 }
 
-.how-it-works .process {
+.how-to-use .process {
     border: 5px solid rgb(244, 111, 81);
 }
 
-.how-it-works .observe {
+.how-to-use .observe {
     border: 5px solid rgb(30, 156, 237);
 }
 
-.how-it-works .description {
+.how-to-use .description {
     text-align: center;
     width: 90%;
 }
