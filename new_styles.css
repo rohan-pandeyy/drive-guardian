@@ -154,12 +154,11 @@ header nav:hover > a:not(:hover):not(.active) {
 }
 
 .how-it-works {
-    padding: 150px;
+    padding: 10vh;
     background: linear-gradient(to top, #1e1e1e 40%, #4c4a4b);;
     color: white;
-    font-size: large;
     position: relative;
-    z-index: 100;
+    z-index: 10;
 }
 
 .how-it-works h1 {
@@ -168,4 +167,50 @@ header nav:hover > a:not(:hover):not(.active) {
     font-weight: bold;
     font-style: normal;
     font-size: 40px;
+}
+
+.hiw-container {
+    padding: 4vh 15vw;
+    display: flex;
+    justify-content: center;
+    gap: 5vw;
+}
+
+.how-it-works img {
+    width: 250px    ;
+}
+
+.how-it-works .room-one,
+.how-it-works .room-two,
+.how-it-works .room-three {
+    display: flex;
+    flex-direction: column;
+    -webkit-box-align: center;
+    align-items: center;
+}
+
+.how-it-works .speech-bubble {
+    margin: 2rem 0 1rem 0;
+    border-radius: 20px;
+    padding: 5px 15px;
+    font-family: "Stick No Bills", sans-serif;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.how-it-works .stream {
+    border: 5px solid rgb(159, 202, 89);
+}
+
+.how-it-works .process {
+    border: 5px solid rgb(244, 111, 81);
+}
+
+.how-it-works .observe {
+    border: 5px solid rgb(30, 156, 237);
+}
+
+.how-it-works .description {
+    text-align: center;
+    width: 90%;
 }
