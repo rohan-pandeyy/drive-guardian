@@ -73,14 +73,14 @@ const fileInput = document.getElementById('fileInput');
 
 const handleFileInputChange = (event) => {
     const selectedFile = event.target.files[0];
-    selectedFile = selectedFile.name;
-    const fileExtension = selectedFile.split('.').pop().toLowerCase();
+    selectedFileName = selectedFile.name;
+    const fileExtension = selectedFileName.split('.').pop().toLowerCase();
     if (fileExtension !== 'mp4') {
         alert("Please select an MP4 file.");
     } else {
         console.log("Selected MP4 file name:", selectedFileName);
         setTimeout(() => {
-            window.open(`http://127.0.0.1:5000/video_stream?filename=video_india.mov&type=v`, '_blank');
+            window.open(`http://127.0.0.1:5000/video_stream?filename=${selectedFileName}&type=v`, '_blank');
             // ... your code to handle the selected MP4 file ...
         }, 2000); // 2000 milliseconds = 2 seconds
     }
