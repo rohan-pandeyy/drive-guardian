@@ -230,19 +230,20 @@ header nav:hover > a:not(:hover):not(.active) {
 
 .s1d623h8f1 .black {
     margin-right: 100px;
+    font-family: 'Times New Roman', Times, serif;
 }
 
 .s1d623h8f1 .white {
     display: inline-block;
     color: white;
     -webkit-text-stroke: 0.7px black;
+    font-family: 'Times New Roman', Times, serif;
 }
 
 .how-it-works {
     padding: 10vh 0;
     background: linear-gradient(to top, #1a1122 40%, #111422);;
     color: white;
-    position: relative;
     z-index: -1;
 }
 
@@ -290,6 +291,7 @@ header nav:hover > a:not(:hover):not(.active) {
     justify-content: center;
     align-items: center;
     margin: 15px;
+    font-family: 'Times New Roman', Times, serif;
 }
 
 .card > .row > .description {
@@ -306,7 +308,7 @@ header nav:hover > a:not(:hover):not(.active) {
 }
 
 .description p {
-    color: #b0b0ba;
+    color: #fff;
     padding-top: 5px;
 }
 
