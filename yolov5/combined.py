@@ -172,8 +172,8 @@ mtx = dist_pickle["mtx"]
 dist = dist_pickle["dist"]
 
 def process_image(image):
-    lane_image = process_image_lane(image) 
-    results = model(torch.from_numpy(image).unsqueeze(0))
+    lane_image = process_image_lane(image)
+    results = model(torch.from_numpy(image).unsqueeze(0).float())
     labels, cord = results.xyxyn[0][:, -1], results.xyxyn[0][:, :-1]
     n = len(labels)
     x_shape, y_shape = image.shape[1], image.shape[0]
