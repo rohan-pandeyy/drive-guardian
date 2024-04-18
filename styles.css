@@ -316,7 +316,7 @@ header nav:hover > a:not(:hover):not(.active) {
     text-transform: uppercase;
 }
 
-input {
+.how-it-works input {
     display: none;
 }
 
