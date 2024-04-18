@@ -155,7 +155,7 @@ header nav:hover > a:not(:hover):not(.active) {
 
 .how-to-use {
     padding: 10vh 0;
-    background: linear-gradient(to top, #27252f 40%, #4c4a4b);;
+    background: linear-gradient(to top, #221d32, #4c4a4b);;
     color: white;
     position: relative;
 }
@@ -340,4 +340,22 @@ input:checked + label .description {
 }
 .card[for="c4"] {
     background-image: url('./assets/how-it-works/img4.jpeg');
+}
+
+.spacer {
+    aspect-ratio: 960/300;
+    width: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    background-color: #B9929F;
+}
+
+.layer1 {
+    background-image: url('./assets/layered-waves.svg');
+}
+
+.contact {
+    padding: 10vh 0;
+    background-color: #B9929F;
 }
