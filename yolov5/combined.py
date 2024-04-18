@@ -93,7 +93,7 @@ def window_mask(width, height, img_ref, center, level):
     return output
 
 def process_image_lane(image):
-    img = cv2.undistort(image, mtx, dist, None, mtx)
+    img = cv2.undistort(np.transpose(image, (1, 2, 0)), mtx, dist, None, mtx)
     preprocessImage = np.zeros_like(img[:,:,0])
     gradx = abs_sobel_thresh(img, orient='x', thresh=(12,255))
     grady = abs_sobel_thresh(img, orient='x', thresh=(25,255))
@@ -161,7 +161,7 @@ def process_image_lane(image):
     return result
 
 # Load YOLOv5 model
-model_path = "yolov5/yolov5s.pt"  # Replace with your model path
+model_path = "./yolov5/yolov5s.pt"  # Replace with your model path
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = DetectMultiBackend(model_path, device=device)
 model.eval() 
@@ -172,7 +172,27 @@ mtx = dist_pickle["mtx"]
 dist = dist_pickle["dist"]
 
 def process_image(image):
+
+    # Load the image
+    image_path = "../assets/how-it-works/img1.jpeg"
+    image = cv2.imread(image_path)
+
+    # Ensure NCHW format (channels first)
+    image = image.transpose(2, 0, 1)  
+
+    # Convert data type and normalize
+    image = image.astype(np.float32) / 255.0
+
+    # Convert to PyTorch tensor
+    image_tensor = torch.from_numpy(image)
+
+    # Check the shape (height, width, channels)
+    print("Image shape:", image.shape)
+
+    # Check the data type
+    print("Image data type:", image.dtype)
     lane_image = process_image_lane(image)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     results = model(torch.from_numpy(image).unsqueeze(0).float())
     labels, cord = results.xyxyn[0][:, -1], results.xyxyn[0][:, :-1]
     n = len(labels)
