@@ -79,7 +79,17 @@ const handleFileInputChange = (event) => {
         alert("Please select an MP4 file.");
     } else {
         console.log("Selected MP4 file name:", selectedFileName);
+        
+        const spinner = document.createElement('div');
+        spinner.className = 'spinner';
+        document.body.appendChild(spinner);
+
+        const backgroundElements = document.querySelectorAll('.header, .home, .how-to-use, .how-it-works, .contact');
+        backgroundElements.forEach(element => element.classList.add('blur'));
+
         setTimeout(() => {
+            spinner.remove();
+            backgroundElements.forEach(element => element.classList.remove('blur'));
             window.open(`http://127.0.0.1:5000/video_stream?filename=${selectedFileName}&type=v`, '_blank');
             // ... your code to handle the selected MP4 file ...
         }, 2000); // 2000 milliseconds = 2 seconds
