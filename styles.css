@@ -125,12 +125,14 @@ header nav:hover > a:not(:hover):not(.active) {
     position: absolute;
     bottom: 0;
     z-index: -1;
+    width: 100vw;
 }
 
 .home .road {
     position: absolute;
     bottom: 0;
     z-index: 1;
+    width: 100vw;
 }
 
 .home .upload {
