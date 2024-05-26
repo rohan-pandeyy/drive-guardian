@@ -1,5 +1,5 @@
 from flask import Flask, request, Response, render_template
-from video_gen import process_video_realtime
+from LD import process_video_realtime
 
 
 app = Flask(__name__, static_url_path='/static', static_folder='static')
