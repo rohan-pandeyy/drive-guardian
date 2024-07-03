@@ -28,7 +28,7 @@ def yolo_detect(frame):
     if not results_df.empty:
         high_confidence_results = results_df[results_df['confidence'] > 0.5]
 
-        # Draw YOLOv5 detections on the image
+        #Draw YOLOv5 detections on the image
         # for index, detection in high_confidence_results.iterrows():
         #     x1, y1, x2, y2, conf, cls = int(detection['xmin']), int(detection['ymin']), int(detection['xmax']), int(detection['ymax']), detection['confidence'], detection['name']
         #     label = f"{cls} {conf:.2f}"
