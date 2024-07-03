@@ -3,6 +3,7 @@ import cv2
 import pickle
 import torch
 from tracker import tracker
+import pandas as pd
 
 # Load calibration data
 dist_pickle = pickle.load(open("calibration_pickle.p", "rb"))
@@ -12,17 +13,28 @@ dist = dist_pickle["dist"]
 # Load YOLOv5 model
 model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
 
+
 def yolo_detect(frame):
     # Perform YOLOv5 object detection
     results = model(frame)
-    detections = results.pandas().xyxy[0]
 
-    # Draw YOLOv5 detections on the image
-    for _, detection in detections.iterrows():
-        x1, y1, x2, y2, conf, cls = int(detection['xmin']), int(detection['ymin']), int(detection['xmax']), int(detection['ymax']), detection['confidence'], detection['name']
-        label = f"{cls} {conf:.2f}"
-        cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
-        cv2.putText(frame, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+    # Convert results to a DataFrame if not already (Ensure this is needed based on your model output)
+    if not isinstance(results, pd.DataFrame):
+        results_df = results.pandas().xyxy[0]
+    else:
+        results_df = results
+
+    # Filter detections based on a higher confidence threshold
+    if not results_df.empty:
+        high_confidence_results = results_df[results_df['confidence'] > 0.5]
+
+        # Draw YOLOv5 detections on the image
+        # for index, detection in high_confidence_results.iterrows():
+        #     x1, y1, x2, y2, conf, cls = int(detection['xmin']), int(detection['ymin']), int(detection['xmax']), int(detection['ymax']), detection['confidence'], detection['name']
+        #     label = f"{cls} {conf:.2f}"
+        #     cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 0, 255), 2)
+        #     cv2.putText(frame, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+    
     return frame
 
 def abs_sobel_thresh(img, orient='x', sobel_kernel=3, thresh=(0, 255)):
