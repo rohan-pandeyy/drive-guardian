@@ -9,8 +9,7 @@ Developed by [Dhruv Kumar](https://github.com/DhruvK278) and [Rohan Pandey](http
 
 ### Video Demo
 
-
-
+<video controls src="images/sample2.mp4" title="Title"></video>
 
 ## Table of Contents
 - [Background](#background)
@@ -37,60 +36,64 @@ Our project aims to enhance the safety of drivers and passengers alike by levera
 
 ## ML Algorithm
 <img width="969" src="images/ML.png">
-<img width="969" src="images/img4.jpeg">
+<img width="969" src="images/img.png">
 
 ### Input
 User-provided dashcam video or stream with their device.
 
 ### Data Preprocessing
+- Camera Calibration: Removes lens distortion using cv2.undistort() and calibration data.
+- Lane Feature Enhancement:
+    - Gradient Thresholding: Highlights edges using abs_sobel_thresh().
+    - Color Thresholding: Selects lane-like pixels based on color with color_threshold().
+    - Bird's-Eye View: Transforms image for easier lane detection via cv2.warpPerspective().
+- YOLOv5 Input: Likely handled internally, involving resizing and normalization.
 
+### Object and Lane Analysis Techniques
+- Utilized advanced Computer Vision techniques, including YOLO and machine learning models.
+- Developed an ML model to detect lane and object detection.
+- Leveraged CV models from `Github` to achieve exceptional accuracy in sentiment classification.
+- Utilized `YOLO` and Sobel algorithm (CV model) for vehicle detection and lane detection.
 
-### Sentiment Analysis Techniques
-- Utilized advanced NLP techniques, including sentiment lexicons and machine learning models.
-- Developed an ML model to classify textual data into positive, negative, or neutral sentiment categories.
-- Leveraged NLP models from `Hugging Face transformers` to achieve exceptional accuracy in sentiment classification.
-- Utilized `VADER` (NLP-based model) for bulk data analysis.
-- Trained a `naive Bayes classifier` specifically for analyzing reviews.
-
-### Dataset
-- Size ranges from 40,000 to 50,000 samples.
 
 ### Output
-Sentiment scores and visualizations depicting sentiment trends.
+Detects vehicle and lanes to apply emergency brakes.
 
 
 ## Instructions to Run
 To run this project locally, follow these steps:
+you must have flask to run it on your local machine, then run it on localhost.
 
 - Install Requirements
-```pip install -r requirements.txt```
+```pip install -r ultralytics```
 
 - Run the application
-```streamlit run Home.py```
+```flask run```
 
 ## Requirements
 ```
+flask
+opencv-python==4.9.0.80  
+numpy==1.24.3  
+torch==2.2.2 
+pillow==10.3.0
 pandas
 numpy
 nltk
 scikit-learn
-streamlit
+cuda
 matplotlib
 plotly==5.17.0
 pygwalker==0.4.8
 scipy==1.13.0
-st_annotated_text==4.0.1
-stqdm==0.0.5
-streamlit==1.26.0
-streamlit_extras==0.4.2
 transformers==4.33.2
-wordcloud==1.9.2
 torch==2.2.2
+torchvision
 ```
 
 ## Contributions and Acknowledgments
 This project is open for contributions, and we welcome any feedback or suggestions for improvement. If you find this project useful, feel free to use it for your needs. When attributing this project, please mention:
 ```
-InSocial by Samaksh Tyagi & Sukant Aryan
-Repository: https://github.com/samakshty/insocial
+Drive Guardian by Dhruv Kumar & Rohan Pandet
+Repository: https://github.com/DhruvK278/drive-guardian
 ```
