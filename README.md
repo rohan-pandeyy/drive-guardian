@@ -9,7 +9,7 @@ Developed by [Dhruv Kumar](https://github.com/DhruvK278) and [Rohan Pandey](http
 
 ### Video Demo
 
-<video controls src="images/sample2.mp4" title="Title"></video>
+https://github.com/user-attachments/assets/e4e4497d-8dad-4fd3-b93a-3001a7c23c59
 
 ## Table of Contents
 - [Background](#background)
