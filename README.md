@@ -2,7 +2,7 @@
 ![image](images/main.png)
 
 
-## ⭐⭐ Project Showcase at Hackaccino 2023, Bennett University
+## ⭐⭐ Project Showcase at Hackaccino 2024, Bennett University
 
 
 Developed by [Dhruv Kumar](https://github.com/DhruvK278) and [Rohan Pandey](https://github.com/rohan-pandeyy)
@@ -65,7 +65,7 @@ To run this project locally, follow these steps:
 you must have flask to run it on your local machine, then run it on localhost.
 
 - Install Requirements
-```pip install -r ultralytics```
+```pip install ultralytics```
 
 - Run the application
 ```flask run```
