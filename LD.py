@@ -88,90 +88,124 @@ def window_mask(width, height, img_ref, center, level):
     return output
 
 def process_image(image):
+    # Undistort the image
     img = cv2.undistort(image, mtx, dist, None, mtx)
-    preprocessImage = np.zeros_like(img[:,:,0])
-    gradx = abs_sobel_thresh(img, orient='x', thresh=(12,255))
-    grady = abs_sobel_thresh(img, orient='x', thresh=(25,255))
-    c_binary = color_threshold(img, sthresh=(100,255), vthresh=(50,255))
-    preprocessImage[((gradx==1) & (grady==1) | (c_binary==1))] = 255
+
+    # Apply gradient and color thresholding
+    gradx = abs_sobel_thresh(img, orient='x', thresh=(12, 255))
+    grady = abs_sobel_thresh(img, orient='y', thresh=(25, 255))
+    c_binary = color_threshold(img, sthresh=(100, 255), vthresh=(50, 255))
+    preprocessImage = np.zeros_like(img[:, :, 0])
+    preprocessImage[((gradx == 1) & (grady == 1)) | (c_binary == 1)] = 255
+
+    # Perspective transform to get a bird's eye view
     img_size = (img.shape[1], img.shape[0])
-    bot_width = .76 
-    mid_width = .08 
-    height_pct = .62 
-    bottom_trim = .935 
-    src = np.float32([[img.shape[1]*(.5-mid_width/2),img.shape[0]*height_pct],
-                      [img.shape[1]*(.5+mid_width/2),img.shape[0]*height_pct], 
-                      [img.shape[1]*(.5+bot_width/2),img.shape[0]*bottom_trim], 
-                      [img.shape[1]*(.5-bot_width/2),img.shape[0]*bottom_trim]])
-    offset = img_size[0]*.25
-    dst = np.float32([[offset, 0], [img_size[0]-offset, 0], 
-                      [img_size[0]-offset, img_size[1]], 
+    bot_width = 0.76  # Bottom trapezoid width
+    mid_width = 0.08  # Top trapezoid width
+    height_pct = 0.62  # Trapezoid height
+    bottom_trim = 0.935  # Trim from the bottom of the image
+    src = np.float32([[img.shape[1] * (0.5 - mid_width / 2), img.shape[0] * height_pct],
+                      [img.shape[1] * (0.5 + mid_width / 2), img.shape[0] * height_pct],
+                      [img.shape[1] * (0.5 + bot_width / 2), img.shape[0] * bottom_trim],
+                      [img.shape[1] * (0.5 - bot_width / 2), img.shape[0] * bottom_trim]])
+    offset = img_size[0] * 0.25
+    dst = np.float32([[offset, 0], [img_size[0] - offset, 0],
+                      [img_size[0] - offset, img_size[1]],
                       [offset, img_size[1]]])
     M = cv2.getPerspectiveTransform(src, dst)
     Minv = cv2.getPerspectiveTransform(dst, src)
     warped = cv2.warpPerspective(preprocessImage, M, img_size, flags=cv2.INTER_LINEAR)
-    window_width = 25 
-    window_height = 80 
-    curve_centers = tracker(Mywindow_width=window_width, Mywindow_height=window_height, 
-                            Mymargin=25, My_ym=10/720, My_xm=4/384, Mysmooth_factor=15)
+
+    # Lane detection using a sliding window
+    window_width = 25
+    window_height = 80
+    curve_centers = tracker(Mywindow_width=window_width, Mywindow_height=window_height,
+                            Mymargin=25, My_ym=10 / 720, My_xm=4 / 384, Mysmooth_factor=15)
     window_centroids = curve_centers.find_window_centroids(warped)
+
     l_points = np.zeros_like(warped)
     r_points = np.zeros_like(warped)
     rightx = []
     leftx = []
-    for level in range(0,len(window_centroids)):
-        l_mask = window_mask(window_width,window_height,warped,window_centroids[level][0],level)
-        r_mask = window_mask(window_width,window_height,warped,window_centroids[level][1],level)
-        # Add center value found in frame to the list of lane points per left, right
+
+    for level in range(0, len(window_centroids)):
+        l_mask = window_mask(window_width, window_height, warped, window_centroids[level][0], level)
+        r_mask = window_mask(window_width, window_height, warped, window_centroids[level][1], level)
         leftx.append(window_centroids[level][0])
         rightx.append(window_centroids[level][1])
-        # Draw the window masks
-        l_points[(l_points == 255) | ((l_mask == 1) ) ] = 255
-        r_points[(r_points == 255) | ((r_mask == 1) ) ] = 255
-    # Draw the lane onto the warped blank image
-    template = np.array(r_points+l_points, np.uint8) # add both left and right window pixels together
-    zero_channel = np.zeros_like(template) # create a zero color channel
-    template = np.array(cv2.merge((zero_channel, template, zero_channel)), np.uint8) # make window pixels green
-    warpage = np.array(cv2.merge((warped, warped, warped)), np.uint8) # making the original road pixels 3 color channels
-    result = cv2.addWeighted(warpage, 1, template, 0.5, 0.0) # overlay the original road image with window results
+        l_points[(l_points == 255) | ((l_mask == 1))] = 255
+        r_points[(r_points == 255) | ((r_mask == 1))] = 255
+
+    template = np.array(r_points + l_points, np.uint8)
+    zero_channel = np.zeros_like(template)
+    template = np.array(cv2.merge((zero_channel, template, zero_channel)), np.uint8)
+    warpage = np.array(cv2.merge((warped, warped, warped)), np.uint8)
+    result = cv2.addWeighted(warpage, 1, template, 0.5, 0.0)
+
     yvals = range(0, warped.shape[0])
-    res_yvals = np.arange(warped.shape[0]-(window_height/2), 0, -window_height)
+    res_yvals = np.arange(warped.shape[0] - (window_height / 2), 0, -window_height)
     left_fit = np.polyfit(res_yvals, leftx, 2)
-    left_fitx = left_fit[0]*yvals*yvals + left_fit[1]*yvals + left_fit[2]
+    left_fitx = left_fit[0] * yvals * yvals + left_fit[1] * yvals + left_fit[2]
     left_fitx = np.array(left_fitx, np.int32)
     right_fit = np.polyfit(res_yvals, rightx, 2)
-    right_fitx = right_fit[0]*yvals*yvals + right_fit[1]*yvals + right_fit[2]
+    right_fitx = right_fit[0] * yvals * yvals + right_fit[1] * yvals + right_fit[2]
     right_fitx = np.array(right_fitx, np.int32)
-    left_lane  = np.array(list(zip(np.concatenate((left_fitx-window_width/2, left_fitx[::-1]+window_width/2), axis=0),
-                                    np.concatenate((yvals, yvals[::-1]), axis=0))), np.int32)
 
-    right_lane = np.array(list(zip(np.concatenate((right_fitx-window_width/2, right_fitx[::-1]+window_width/2), axis=0),
-                                    np.concatenate((yvals, yvals[::-1]), axis=0))), np.int32)
-    inner_lane = np.array(list(zip(np.concatenate((left_fitx+window_width/2, right_fitx[::-1]-window_width/2), axis=0),
-                                    np.concatenate((yvals, yvals[::-1]), axis=0))), np.int32)
-    # Create a blank image to draw the lines on
+    left_lane = np.array(list(zip(np.concatenate((left_fitx - window_width / 2, left_fitx[::-1] + window_width / 2), axis=0),
+                                  np.concatenate((yvals, yvals[::-1]), axis=0))), np.int32)
+    right_lane = np.array(list(zip(np.concatenate((right_fitx - window_width / 2, right_fitx[::-1] + window_width / 2), axis=0),
+                                   np.concatenate((yvals, yvals[::-1]), axis=0))), np.int32)
+    inner_lane = np.array(list(zip(np.concatenate((left_fitx + window_width / 2, right_fitx[::-1] - window_width / 2), axis=0),
+                                   np.concatenate((yvals, yvals[::-1]), axis=0))), np.int32)
+
     lane_image = np.zeros_like(img)
-    # Draw the lane onto the warped blank image
     cv2.fillPoly(lane_image, [left_lane], [255, 0, 0])
     cv2.fillPoly(lane_image, [right_lane], [0, 0, 255])
     cv2.fillPoly(lane_image, [inner_lane], [0, 255, 0])
-    # Warp the blank back to original image space using inverse perspective matrix (Minv)
-    lane_image_unwarped = cv2.warpPerspective(lane_image, Minv, (img.shape[1], img.shape[0])) 
-    # Combine the result with the original image
+
+    # Unwarp the lane area back to original perspective
+    lane_image_unwarped = cv2.warpPerspective(lane_image, Minv, (img.shape[1], img.shape[0]))
     result = cv2.addWeighted(img, 1, lane_image_unwarped, 0.3, 0)
-    
-    # Perform YOLOv5 object detection
+
+    # YOLO object detection
     results = model(img)
     detections = results.pandas().xyxy[0]
 
-    # Draw YOLOv5 detections on the image
+    # Create a binary mask of the lane area
+    lane_mask = cv2.cvtColor(lane_image_unwarped, cv2.COLOR_BGR2GRAY)
+    _, lane_mask = cv2.threshold(lane_mask, 1, 255, cv2.THRESH_BINARY)
+
+    # Draw detections on the image
     for _, detection in detections.iterrows():
-        x1, y1, x2, y2, conf, cls = int(detection['xmin']), int(detection['ymin']), int(detection['xmax']), int(detection['ymax']), detection['confidence'], detection['name']
+        x1, y1, x2, y2 = int(detection['xmin']), int(detection['ymin']), int(detection['xmax']), int(detection['ymax'])
+        conf, cls = detection['confidence'], detection['name']
+
+        # Extract the area of the box and check for intersection with the lane mask
+        box_area = lane_mask[y1:y2, x1:x2]
+        
+        box_color = (0, 255, 0)  # Default color (green)
+
+        if np.any(box_area):
+            # Object is within the lane
+
+            # Calculate the bottom center of the bounding box
+            bottom_center_y = y2 
+            
+            # Distance approximation (assuming objects lower in the image are closer)
+            distance_ratio = (bottom_center_y) / image.shape[0]  
+
+            # Change color based on distance (closer = red, farther = yellow)
+            if distance_ratio > 0.8:  # Adjust threshold as needed
+                box_color = (0, 0, 255)  # Red
+            elif distance_ratio > 0.5:
+                box_color = (0, 255, 255)  # Yellow 
+
         label = f"{cls} {conf:.2f}"
-        cv2.rectangle(result, (x1, y1), (x2, y2), (0, 255, 0), 2)
-        cv2.putText(result, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-    
+        cv2.rectangle(result, (x1, y1), (x2, y2), box_color, 2)
+        cv2.putText(result, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, box_color, 2)
+
     return result
+
 
 def process_video_realtime(input_video_path):
     cap = cv2.VideoCapture(input_video_path)
