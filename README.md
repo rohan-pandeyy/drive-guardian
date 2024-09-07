@@ -5,7 +5,7 @@
 ## ⭐⭐ Project Showcase at Hackaccino 2024, Bennett University
 
 
-Developed by [Dhruv Kumar](https://github.com/DhruvK278) and [Rohan Pandey](https://github.com/rohan-pandeyy)
+Developed by [Rohan Pandey](https://github.com/rohan-pandeyy) and [Dhruv Kumar](https://github.com/DhruvK278)
 
 ### Video Demo
 
@@ -94,6 +94,6 @@ torchvision
 ## Contributions and Acknowledgments
 This project is open for contributions, and we welcome any feedback or suggestions for improvement. If you find this project useful, feel free to use it for your needs. When attributing this project, please mention:
 ```
-Drive Guardian by Dhruv Kumar & Rohan Pandet
-Repository: https://github.com/DhruvK278/drive-guardian
+Drive Guardian by Rohan Pandey & Dhruv Kumar
+Repository: https://github.com/rohan-pandeyy/drive-guardian
 ```
