@@ -4,6 +4,12 @@ import pickle
 import torch
 from tracker import tracker
 import pandas as pd
+import paho.mqtt.client as mqtt
+
+# Set up the MQTT client
+broker_address = "192.168.29.216"  # Replace with your broker address
+mqtt_client = mqtt.Client(client_id="Publisher")
+mqtt_client.connect(broker_address, 1883, 60)
 
 # Load calibration data
 dist_pickle = pickle.load(open("calibration_pickle.p", "rb"))
@@ -27,13 +33,6 @@ def yolo_detect(frame):
     # Filter detections based on a higher confidence threshold
     if not results_df.empty:
         high_confidence_results = results_df[results_df['confidence'] > 0.5]
-
-        #Draw YOLOv5 detections on the image
-        # for index, detection in high_confidence_results.iterrows():
-        #     x1, y1, x2, y2, conf, cls = int(detection['xmin']), int(detection['ymin']), int(detection['xmax']), int(detection['ymax']), detection['confidence'], detection['name']
-        #     label = f"{cls} {conf:.2f}"
-        #     cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 0, 255), 2)
-        #     cv2.putText(frame, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
     
     return frame
 
@@ -52,7 +51,7 @@ def mag_thresh(img, sobel_kernel=3, mag_thresh=(0, 255)):
     gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     sobelx = cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize=sobel_kernel)
     sobely = cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=sobel_kernel)
-    gradmag = np.sqrt(sobelx**2 + sobely**2)
+    gradmag = np.sqrt(sobelx*2 + sobely*2)
     scale_factor = np.max(gradmag)/255 
     gradmag = (gradmag/scale_factor).astype(np.uint8) 
     binary_output = np.zeros_like(gradmag)
@@ -175,37 +174,35 @@ def process_image(image):
     lane_mask = cv2.cvtColor(lane_image_unwarped, cv2.COLOR_BGR2GRAY)
     _, lane_mask = cv2.threshold(lane_mask, 1, 255, cv2.THRESH_BINARY)
 
+    brake_signal = 1  # Initialize as not braking (0)
+
     # Draw detections on the image
     for _, detection in detections.iterrows():
         x1, y1, x2, y2 = int(detection['xmin']), int(detection['ymin']), int(detection['xmax']), int(detection['ymax'])
         conf, cls = detection['confidence'], detection['name']
 
-        # Extract the area of the box and check for intersection with the lane mask
         box_area = lane_mask[y1:y2, x1:x2]
-        
-        box_color = (0, 255, 0)  # Default color (green)
+
+        box_color = (0, 255, 0)  # Default green
 
         if np.any(box_area):
-            # Object is within the lane
+            bottom_center_y = y2
+            distance_ratio = (bottom_center_y) / image.shape[0]
 
-            # Calculate the bottom center of the bounding box
-            bottom_center_y = y2 
-            
-            # Distance approximation (assuming objects lower in the image are closer)
-            distance_ratio = (bottom_center_y) / image.shape[0]  
-
-            # Change color based on distance (closer = red, farther = yellow)
-            if distance_ratio > 0.8:  # Adjust threshold as needed
+            if distance_ratio > 0.8:
                 box_color = (0, 0, 255)  # Red
+                brake_signal = 1  # Brake (1)
             elif distance_ratio > 0.5:
-                box_color = (0, 255, 255)  # Yellow 
+                box_color = (0, 255, 255)  # Yellow
 
         label = f"{cls} {conf:.2f}"
         cv2.rectangle(result, (x1, y1), (x2, y2), box_color, 2)
         cv2.putText(result, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, box_color, 2)
 
+    # Publish the brake signal over MQTT
+    mqtt_client.publish("test", str(brake_signal))
+    
     return result
-
 
 def process_video_realtime(input_video_path):
     cap = cv2.VideoCapture(input_video_path)
@@ -228,4 +225,3 @@ def process_video_realtime(input_video_path):
 
     cap.release()
     cv2.destroyAllWindows()
-
