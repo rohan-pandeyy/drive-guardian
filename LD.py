@@ -7,7 +7,7 @@ import pandas as pd
 import paho.mqtt.client as mqtt
 
 # Set up the MQTT client
-broker_address = "192.168.29.216"  # Replace with your broker address
+broker_address = "10.12.104.29"  # Replace with your broker address
 mqtt_client = mqtt.Client(client_id="Publisher")
 mqtt_client.connect(broker_address, 1883, 60)
 
@@ -174,7 +174,7 @@ def process_image(image):
     lane_mask = cv2.cvtColor(lane_image_unwarped, cv2.COLOR_BGR2GRAY)
     _, lane_mask = cv2.threshold(lane_mask, 1, 255, cv2.THRESH_BINARY)
 
-    brake_signal = 1  # Initialize as move (1 = no brake, car moves)
+    brake_signal = 1  # Initialize as not braking (0)
 
     # Draw detections on the image
     for _, detection in detections.iterrows():
@@ -191,7 +191,7 @@ def process_image(image):
 
             if distance_ratio > 0.8:
                 box_color = (0, 0, 255)  # Red
-                brake_signal = 0  # Brake signal = 1 (car brakes)
+                brake_signal = 0  # Brake (1)
             elif distance_ratio > 0.5:
                 box_color = (0, 255, 255)  # Yellow
 
@@ -209,9 +209,6 @@ def process_video_realtime(input_video_path):
     while True:
         ret, frame = cap.read()
         if not ret:
-            # When the video ends, send a brake signal (cut off power)
-            mqtt_client.publish("test", "1")  # Brake signal
-            print("Video ended, applying brakes.")
             break
         
         # First apply YOLO detections on the frame
@@ -228,6 +225,3 @@ def process_video_realtime(input_video_path):
 
     cap.release()
     cv2.destroyAllWindows()
-    # Ensure brakes are applied when video capture is released
-    mqtt_client.publish("test", "0")
-    print("Capture released, brakes applied.")
