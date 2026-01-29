@@ -13,7 +13,7 @@ allow_anonymous true
 
 import paho.mqtt.client as mqtt
 
-broker_address = "192.168.29.216"
+broker_address = "10.12.102.162"
 client = mqtt.Client(client_id="Publisher")
 client.connect(broker_address, 1883, 60)
 i = True
