@@ -1,0 +1,5 @@
+# High Power Execution Profile (x86_64, Nvidia GPUs, High RAM)
+MODEL_PATH: 'models/yolov8n.pt'
+RESOLUTION: [1920, 1080]
+FPS: 60
+ENABLE_TRACKING: true

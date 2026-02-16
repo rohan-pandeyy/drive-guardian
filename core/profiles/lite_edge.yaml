@@ -1,0 +1,5 @@
+# Edge Device Execution Profile (Raspberry Pi, ARM, Low RAM)
+MODEL_PATH: 'models/yolov8n.onnx'
+RESOLUTION: [640, 480]
+FPS: 15
+ENABLE_TRACKING: false
