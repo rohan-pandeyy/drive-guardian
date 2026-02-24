@@ -15,8 +15,8 @@ def main():
     app = DriveGuardianApp()
     
     # Initialize and start the background video thread (which runs the ML inference)
-    # We pass the image_label widget so the thread can update it directly
-    video_thread = VideoThread(app.video_frame)
+    # We pass the queue so the thread can push un-blocking updates to the main UI
+    video_thread = VideoThread(app.video_queue)
     video_thread.start()
 
     # Graceful shutdown handling

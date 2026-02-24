@@ -1,4 +1,5 @@
 import customtkinter as ctk
+import queue
 
 class DriveGuardianApp(ctk.CTk):
     def __init__(self):
@@ -35,6 +36,17 @@ class DriveGuardianApp(ctk.CTk):
         # The label that will be updated constantly by the video thread
         self.video_frame = ctk.CTkLabel(self.main_frame, text="Initializing Camera & AI Pipeline...")
         self.video_frame.grid(row=0, column=0, sticky="nsew")
+        
+        self.video_queue = queue.Queue()
+        self.update_video_feed()
+
+    def update_video_feed(self):
+        if not self.video_queue.empty():
+            new_image = self.video_queue.get()
+            self.video_frame.configure(image=new_image, text="")
+        
+        # Poll the queue every 15ms
+        self.after(15, self.update_video_feed)
 
     def open_settings(self):
         print("Settings window placeholder")
