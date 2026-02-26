@@ -19,6 +19,24 @@ def main():
     video_thread = VideoThread(app.video_queue)
     video_thread.start()
 
+    # Setup source change callback
+    def handle_source_change(new_source):
+        if new_source == "Video File":
+            file_path = ctk.filedialog.askopenfilename(
+                title="Select Video File",
+                filetypes=[("Video files", "*.mp4 *.avi *.mkv *.mov")]
+            )
+            if file_path:
+                video_thread.change_source(file_path)
+            else:
+                # Revert UI option if canceled
+                app.source_optionmenu.set("Webcam")
+                video_thread.change_source(0)
+        else:
+            video_thread.change_source(0)
+
+    app.on_source_change_callback = handle_source_change
+
     # Graceful shutdown handling
     def on_closing():
         video_thread.stop()
