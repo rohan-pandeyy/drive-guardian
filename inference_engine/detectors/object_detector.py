@@ -6,5 +6,5 @@ class ObjectDetector(ABC):
         pass
         
     @abstractmethod
-    def predict(self, frame):
+    def process_frame(self, frame):
         pass

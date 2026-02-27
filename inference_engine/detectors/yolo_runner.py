@@ -22,7 +22,7 @@ class YoloRunner(ObjectDetector):
             print(f"Failed to load YOLO model: {e}")
             raise e
             
-    def predict(self, frame):
+    def process_frame(self, frame):
         if self.model is None:
             raise RuntimeError("Model is not loaded. Call load_model() first.")
             
