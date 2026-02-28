@@ -8,6 +8,8 @@ import customtkinter as ctk
 
 # Import our inference engine
 from inference_engine.pipeline import get_object_detector, get_lane_detector
+from inference_engine.features.lane_departure import LaneDepartureWarning
+from inference_engine.features.collision_warn import ForwardCollisionWarning
 from core.config import settings
 
 class VideoThread(threading.Thread):
@@ -22,11 +24,15 @@ class VideoThread(threading.Thread):
         try:
             self.yolo_detector = get_object_detector()
             self.lane_detector = get_lane_detector()
+            self.ldw = LaneDepartureWarning(drift_threshold=50)
+            self.fcw = ForwardCollisionWarning(critical_area_threshold=0.15)
             self.cap = cv2.VideoCapture(self.source)
         except Exception as e:
             print(f"Error initializing detector or camera: {e}")
             self.yolo_detector = None
             self.lane_detector = None
+            self.ldw = None
+            self.fcw = None
             self.cap = None
 
     def change_source(self, new_source):
@@ -68,7 +74,7 @@ class VideoThread(threading.Thread):
             # 2. Run Lane Detection (GPU/ONNX)
             lane_results = self.lane_detector.process_frame(frame) if self.lane_detector else None
             
-            # 3. Combine Overlays
+            # 3. Combine Overlays and Compute ADAS Warnings
             annotated_frame = self.draw_all_warnings(frame, yolo_results, lane_results)
                 
             # Convert OpenCV BGR to RGB
@@ -94,6 +100,7 @@ class VideoThread(threading.Thread):
     def draw_all_warnings(self, frame, yolo_results, lane_results):
         """ Combines object detection boxes and lane detection lines onto the frame """
         annotated_frame = frame.copy()
+        frame_height, frame_width = frame.shape[:2]
         
         # Draw YOLO Boxes
         if yolo_results is not None:
@@ -111,7 +118,18 @@ class VideoThread(threading.Thread):
                     # Draw red dots on the anchor points
                     for point in lane:
                         cv2.circle(annotated_frame, tuple(point), radius=4, color=(0, 0, 255), thickness=-1)
+
+        # Evaluate ADAS Features
+        if self.ldw and self.fcw:
+            is_drifting, ldw_msg = self.ldw.evaluate(lane_results, frame_width, frame_height)
+            is_crashing, fcw_msg = self.fcw.evaluate(yolo_results, lane_results, frame_width, frame_height)
             
+            if is_drifting:
+                cv2.putText(annotated_frame, ldw_msg, (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 0, 255), 4)
+
+            if is_crashing:
+                cv2.putText(annotated_frame, fcw_msg, (50, 180), cv2.FONT_HERSHEY_SIMPLEX, 2.0, (0, 0, 255), 5)
+                
         return annotated_frame
 
     def stop(self):
