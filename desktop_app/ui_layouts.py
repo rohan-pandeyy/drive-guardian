@@ -33,9 +33,12 @@ class DriveGuardianApp(ctk.CTk):
         self.source_optionmenu = ctk.CTkOptionMenu(self.sidebar_frame, values=["Webcam", "Video File"],
                                                    command=self.change_source_event)
         self.source_optionmenu.grid(row=4, column=0, padx=20, pady=(0, 10))
+
+        self.latency_label = ctk.CTkLabel(self.sidebar_frame, text="Latency: -- ms", font=ctk.CTkFont(weight="bold"))
+        self.latency_label.grid(row=5, column=0, padx=20, pady=0, sticky="w")
         
         self.fps_label = ctk.CTkLabel(self.sidebar_frame, text="FPS: --", font=ctk.CTkFont(weight="bold"))
-        self.fps_label.grid(row=5, column=0, padx=20, pady=10, sticky="w")
+        self.fps_label.grid(row=6, column=0, padx=20, pady=10, sticky="w")
         
         self.on_source_change_callback = None
         
@@ -54,10 +57,11 @@ class DriveGuardianApp(ctk.CTk):
 
     def update_video_feed(self):
         if not self.video_queue.empty():
-            # Unpack the image and the latest fps calculation
-            new_image, fps_value = self.video_queue.get()
+            # Unpack the image and the latest fps/latency calculation
+            new_image, fps_value, latency_value = self.video_queue.get()
             self.video_frame.configure(image=new_image, text="")
             self.fps_label.configure(text=f"FPS: {fps_value}")
+            self.latency_label.configure(text=f"Latency: {latency_value} ms")
         
         # Poll the queue every 15ms
         self.after(15, self.update_video_feed)

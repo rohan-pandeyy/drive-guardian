@@ -68,11 +68,17 @@ class VideoThread(threading.Thread):
                     time.sleep(0.1)
                 continue
                 
+            # Target inference block
+            inference_start = time.perf_counter()
+            
             # 1. Run Object Detection (GPU)
             yolo_results = self.yolo_detector.process_frame(frame) if self.yolo_detector else None
             
             # 2. Run Lane Detection (GPU/ONNX)
             lane_results = self.lane_detector.process_frame(frame) if self.lane_detector else None
+            
+            inference_end = time.perf_counter()
+            latency_ms = int((inference_end - inference_start) * 1000)
             
             # 3. Combine Overlays and Compute ADAS Warnings
             annotated_frame = self.draw_all_warnings(frame, yolo_results, lane_results)
@@ -92,8 +98,8 @@ class VideoThread(threading.Thread):
             prev_frame_time = new_frame_time
             fps_display_val = int(fps)
             
-            # Put the image and FPS into the queue safely as a tuple
-            self.video_queue.put((ctk_img, fps_display_val))
+            # Put the image, FPS, and Latency into the queue safely as a tuple
+            self.video_queue.put((ctk_img, fps_display_val, latency_ms))
             
             time.sleep(1 / settings.FPS) # Simple throttle based on profile
 
