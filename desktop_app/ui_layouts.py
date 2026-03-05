@@ -34,13 +34,19 @@ class DriveGuardianApp(ctk.CTk):
                                                    command=self.change_source_event)
         self.source_optionmenu.grid(row=4, column=0, padx=20, pady=(0, 10))
 
+        self.lane_toggle = ctk.CTkSwitch(self.sidebar_frame, text="Lane Detection", 
+                                         command=self.toggle_lane_event)
+        self.lane_toggle.grid(row=5, column=0, padx=20, pady=10, sticky="w")
+        self.lane_toggle.select()  # Default to ON
+        
         self.latency_label = ctk.CTkLabel(self.sidebar_frame, text="Latency: -- ms", font=ctk.CTkFont(weight="bold"))
-        self.latency_label.grid(row=5, column=0, padx=20, pady=0, sticky="w")
+        self.latency_label.grid(row=6, column=0, padx=20, pady=0, sticky="w")
         
         self.fps_label = ctk.CTkLabel(self.sidebar_frame, text="FPS: --", font=ctk.CTkFont(weight="bold"))
-        self.fps_label.grid(row=6, column=0, padx=20, pady=10, sticky="w")
+        self.fps_label.grid(row=7, column=0, padx=20, pady=10, sticky="w")
         
         self.on_source_change_callback = None
+        self.on_lane_toggle_callback = None
         
         # -- Main Video Area --
         self.main_frame = ctk.CTkFrame(self, fg_color="black")
@@ -69,6 +75,11 @@ class DriveGuardianApp(ctk.CTk):
     def change_source_event(self, new_source: str):
         if self.on_source_change_callback:
             self.on_source_change_callback(new_source)
+
+    def toggle_lane_event(self):
+        state = self.lane_toggle.get() == 1
+        if self.on_lane_toggle_callback:
+            self.on_lane_toggle_callback(state)
 
     def open_settings(self):
         print("Settings window placeholder")

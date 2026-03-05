@@ -19,6 +19,7 @@ class VideoThread(threading.Thread):
         self.running = False
         self.source = 0
         self.source_changed = False
+        self.enable_lane_detection = True
         self.source_lock = threading.Lock()
         
         try:
@@ -39,6 +40,10 @@ class VideoThread(threading.Thread):
         with self.source_lock:
             self.source = new_source
             self.source_changed = True
+
+    def toggle_lane_detection(self, state: bool):
+        with self.source_lock:
+            self.enable_lane_detection = state
 
     def run(self):
         self.running = True
@@ -74,8 +79,10 @@ class VideoThread(threading.Thread):
             # 1. Run Object Detection (GPU)
             yolo_results = self.yolo_detector.process_frame(frame) if self.yolo_detector else None
             
-            # 2. Run Lane Detection (GPU/ONNX)
-            lane_results = self.lane_detector.process_frame(frame) if self.lane_detector else None
+            # 2. Run Lane Detection (GPU/ONNX) conditionally
+            lane_results = None
+            if self.enable_lane_detection and self.lane_detector:
+                lane_results = self.lane_detector.process_frame(frame)
             
             inference_end = time.perf_counter()
             latency_ms = int((inference_end - inference_start) * 1000)

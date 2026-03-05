@@ -37,6 +37,11 @@ def main():
 
     app.on_source_change_callback = handle_source_change
 
+    def handle_lane_toggle(state):
+        video_thread.toggle_lane_detection(state)
+        
+    app.on_lane_toggle_callback = handle_lane_toggle
+
     # Graceful shutdown handling
     def on_closing():
         video_thread.stop()
