@@ -39,21 +39,27 @@ class DriveGuardianApp(ctk.CTk):
         self.lane_toggle.grid(row=5, column=0, padx=20, pady=10, sticky="w")
         self.lane_toggle.select()  # Default to ON
         
+        self.yolo_toggle = ctk.CTkSwitch(self.sidebar_frame, text="Object Detection", 
+                                         command=self.toggle_yolo_event)
+        self.yolo_toggle.grid(row=6, column=0, padx=20, pady=10, sticky="w")
+        self.yolo_toggle.select()  # Default to ON
+        
         self.yolo_model_label = ctk.CTkLabel(self.sidebar_frame, text="YOLO Model:")
-        self.yolo_model_label.grid(row=6, column=0, padx=20, pady=(10, 0), sticky="w")
+        self.yolo_model_label.grid(row=7, column=0, padx=20, pady=(10, 0), sticky="w")
         
         self.yolo_model_optionmenu = ctk.CTkOptionMenu(self.sidebar_frame, values=["yolo12n.pt"],
                                                        command=self.change_yolo_model_event)
-        self.yolo_model_optionmenu.grid(row=7, column=0, padx=20, pady=(0, 10))
+        self.yolo_model_optionmenu.grid(row=8, column=0, padx=20, pady=(0, 10))
         
         self.latency_label = ctk.CTkLabel(self.sidebar_frame, text="Latency: -- ms", font=ctk.CTkFont(weight="bold"))
-        self.latency_label.grid(row=8, column=0, padx=20, pady=0, sticky="w")
+        self.latency_label.grid(row=9, column=0, padx=20, pady=0, sticky="w")
         
         self.fps_label = ctk.CTkLabel(self.sidebar_frame, text="FPS: --", font=ctk.CTkFont(weight="bold"))
-        self.fps_label.grid(row=9, column=0, padx=20, pady=10, sticky="w")
+        self.fps_label.grid(row=10, column=0, padx=20, pady=10, sticky="w")
         
         self.on_source_change_callback = None
         self.on_lane_toggle_callback = None
+        self.on_yolo_toggle_callback = None
         self.on_yolo_model_change_callback = None
         
         # -- Main Video Area --
@@ -88,6 +94,11 @@ class DriveGuardianApp(ctk.CTk):
         state = self.lane_toggle.get() == 1
         if self.on_lane_toggle_callback:
             self.on_lane_toggle_callback(state)
+
+    def toggle_yolo_event(self):
+        state = self.yolo_toggle.get() == 1
+        if self.on_yolo_toggle_callback:
+            self.on_yolo_toggle_callback(state)
 
     def change_yolo_model_event(self, new_model_name: str):
         if self.on_yolo_model_change_callback:

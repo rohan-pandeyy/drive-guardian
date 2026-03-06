@@ -61,6 +61,11 @@ def main():
         
     app.on_lane_toggle_callback = handle_lane_toggle
     
+    def handle_yolo_toggle(state):
+        video_thread.toggle_object_detection(state)
+        
+    app.on_yolo_toggle_callback = handle_yolo_toggle
+    
     def handle_yolo_model_change(model_name):
         video_thread.change_yolo_model(model_name)
         

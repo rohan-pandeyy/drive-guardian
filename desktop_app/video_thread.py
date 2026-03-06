@@ -20,6 +20,7 @@ class VideoThread(threading.Thread):
         self.source = 0
         self.source_changed = False
         self.enable_lane_detection = True
+        self.enable_object_detection = True
         self.source_lock = threading.Lock()
         
         try:
@@ -44,6 +45,10 @@ class VideoThread(threading.Thread):
     def toggle_lane_detection(self, state: bool):
         with self.source_lock:
             self.enable_lane_detection = state
+
+    def toggle_object_detection(self, state: bool):
+        with self.source_lock:
+            self.enable_object_detection = state
 
     def change_yolo_model(self, model_filename: str):
         with self.source_lock:
@@ -82,8 +87,10 @@ class VideoThread(threading.Thread):
             # Target inference block
             inference_start = time.perf_counter()
             
-            # 1. Run Object Detection (GPU)
-            yolo_results = self.yolo_detector.process_frame(frame) if self.yolo_detector else None
+            # 1. Run Object Detection (GPU) conditionally
+            yolo_results = None
+            if self.enable_object_detection and self.yolo_detector:
+                yolo_results = self.yolo_detector.process_frame(frame)
             
             # 2. Run Lane Detection (GPU/ONNX) conditionally
             lane_results = None
