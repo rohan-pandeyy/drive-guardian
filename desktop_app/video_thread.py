@@ -45,6 +45,12 @@ class VideoThread(threading.Thread):
         with self.source_lock:
             self.enable_lane_detection = state
 
+    def change_yolo_model(self, model_filename: str):
+        with self.source_lock:
+            if self.yolo_detector:
+                print(f"[UI] Switching YOLO model to: models/{model_filename}")
+                self.yolo_detector.load_model(f"models/{model_filename}")
+
     def run(self):
         self.running = True
         

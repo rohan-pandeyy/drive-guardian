@@ -14,6 +14,25 @@ def main():
     # Initialize the main UI window
     app = DriveGuardianApp()
     
+    # Parse available YOLO models to populate dropdown
+    from core.config import settings
+    models_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "models")
+    try:
+        yolo_models = [f for f in os.listdir(models_dir) if f.endswith(".pt") and "yolo" in f.lower()]
+    except Exception:
+        yolo_models = []
+    
+    if not yolo_models:
+        yolo_models = ["yolo12n.pt"]
+        
+    app.yolo_model_optionmenu.configure(values=yolo_models)
+    
+    current_model_basename = os.path.basename(settings.MODEL_PATH)
+    if current_model_basename in yolo_models:
+        app.yolo_model_optionmenu.set(current_model_basename)
+    else:
+        app.yolo_model_optionmenu.set(yolo_models[0])
+    
     # Initialize and start the background video thread (which runs the ML inference)
     # We pass the queue so the thread can push un-blocking updates to the main UI
     video_thread = VideoThread(app.video_queue)
@@ -41,6 +60,11 @@ def main():
         video_thread.toggle_lane_detection(state)
         
     app.on_lane_toggle_callback = handle_lane_toggle
+    
+    def handle_yolo_model_change(model_name):
+        video_thread.change_yolo_model(model_name)
+        
+    app.on_yolo_model_change_callback = handle_yolo_model_change
 
     # Graceful shutdown handling
     def on_closing():
