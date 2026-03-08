@@ -1,7 +1,8 @@
 import cv2
 import numpy as np
 import onnxruntime as ort
-from .object_detector import ObjectDetector
+from .base_object import ObjectDetector
+from core.config import settings
 
 class ONNXRunner(ObjectDetector):
     def __init__(self, model_path: str):
