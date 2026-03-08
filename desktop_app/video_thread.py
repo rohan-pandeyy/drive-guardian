@@ -92,8 +92,15 @@ class VideoThread(threading.Thread):
             prev_frame_time = new_frame_time
             fps_display_val = int(fps)
             
-            # Put the image and FPS into the queue safely as a tuple
-            self.video_queue.put((ctk_img, fps_display_val))
+            # Drop stale frames — only keep the latest
+            try:
+                self.video_queue.put_nowait((ctk_img, fps_display_val))
+            except queue.Full:
+                try:
+                    self.video_queue.get_nowait()
+                except queue.Empty:
+                    pass
+                self.video_queue.put_nowait((ctk_img, fps_display_val))
             
             time.sleep(1 / settings.FPS) # Simple throttle based on profile
 

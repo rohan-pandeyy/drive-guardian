@@ -29,7 +29,7 @@ class ONNXRunner(ObjectDetector):
             print(f"Failed to load ONNX model: {e}")
             raise e
             
-    def predict(self, frame):
+    def process_frame(self, frame):
         if self.session is None:
             raise RuntimeError("Model is not loaded. Call load_model() first.")
             

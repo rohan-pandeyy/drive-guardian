@@ -16,7 +16,7 @@ class ForwardCollisionWarning:
         if yolo_results is None or len(yolo_results) == 0:
             return False, ""
 
-        boxes = yolo_results[0].boxes
+        boxes = yolo_results.boxes
         if boxes is None or len(boxes) == 0:
             return False, ""
 
