@@ -1,7 +1,7 @@
-import cv2
 import torch
 from ultralytics import YOLO
 from .object_detector import ObjectDetector
+from core.config import settings
 
 class YoloRunner(ObjectDetector):
     def __init__(self, model_path: str):
@@ -25,7 +25,20 @@ class YoloRunner(ObjectDetector):
     def process_frame(self, frame):
         if self.model is None:
             raise RuntimeError("Model is not loaded. Call load_model() first.")
-            
-        # Run inference specifying the device and silencing the console
-        results = self.model(frame, device=self.device, verbose=False)
+
+        if settings.ENABLE_TRACKING:
+            # Tracking mode: each detected object gets a persistent integer ID
+            # across frames. persist=True is required to maintain tracker state
+            # between calls in a frame loop — without it IDs reset every frame.
+            results = self.model.track(
+                frame,
+                persist=True,
+                tracker=settings.TRACKER,
+                device=self.device,
+                verbose=False,
+            )
+        else:
+            # Detection-only mode: faster, stateless, used on edge devices
+            results = self.model(frame, device=self.device, verbose=False)
+
         return results[0]
