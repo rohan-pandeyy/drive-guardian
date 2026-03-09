@@ -17,7 +17,9 @@ class YoloRunner(ObjectDetector):
         try:
             self.model = YOLO(self.model_path)
             self.device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
-            print(f"[INFO] YOLO Runner initialized on device: {self.device}")
+            if self.device == 'cuda:0':
+                torch.backends.cudnn.benchmark = True
+            print(f"[INFO] YOLO Runner initialized on device: {self.device} (CuDNN Benchmark: {torch.backends.cudnn.benchmark})")
         except Exception as e:
             print(f"Failed to load YOLO model: {e}")
             raise e
@@ -36,9 +38,10 @@ class YoloRunner(ObjectDetector):
                 tracker=settings.TRACKER,
                 device=self.device,
                 verbose=False,
+                half=True,
             )
         else:
             # Detection-only mode: faster, stateless, used on edge devices
-            results = self.model(frame, device=self.device, verbose=False)
+            results = self.model(frame, device=self.device, verbose=False, half=True)
 
         return results[0]
