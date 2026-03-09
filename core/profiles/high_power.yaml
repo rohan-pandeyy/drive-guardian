@@ -3,3 +3,4 @@ MODEL_PATH: 'models/yolo12n.pt'
 RESOLUTION: [1920, 1080]
 FPS: 60
 ENABLE_TRACKING: true
+TRACKER: 'bytetrack.yaml'

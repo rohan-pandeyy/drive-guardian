@@ -10,6 +10,7 @@ class Settings:
         self.RESOLUTION = [1920, 1080]
         self.FPS = 30
         self.ENABLE_TRACKING = True
+        self.TRACKER = "bytetrack.yaml"
     
     def load_profile(self):
         profile_path = os.path.join(os.path.dirname(__file__), "profiles", f"{self.PROFILE}.yaml")
@@ -21,6 +22,7 @@ class Settings:
                     self.RESOLUTION = data.get("RESOLUTION", self.RESOLUTION)
                     self.FPS = data.get("FPS", self.FPS)
                     self.ENABLE_TRACKING = data.get("ENABLE_TRACKING", self.ENABLE_TRACKING)
+                    self.TRACKER = data.get("TRACKER", self.TRACKER)
         else:
             print(f"Warning: Profile {profile_path} not found. Using defaults.")
 
