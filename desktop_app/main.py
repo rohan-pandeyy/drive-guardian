@@ -40,6 +40,7 @@ def main():
     # Graceful shutdown handling
     def on_closing():
         video_thread.stop()
+        video_thread.join()
         app.destroy()
         
     app.protocol("WM_DELETE_WINDOW", on_closing)

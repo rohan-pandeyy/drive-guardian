@@ -49,7 +49,7 @@ class DriveGuardianApp(ctk.CTk):
         self.video_frame = ctk.CTkLabel(self.main_frame, text="Initializing Camera & AI Pipeline...")
         self.video_frame.grid(row=0, column=0, sticky="nsew")
         
-        self.video_queue = queue.Queue()
+        self.video_queue = queue.Queue(maxsize=1)
         self.update_video_feed()
 
     def update_video_feed(self):
