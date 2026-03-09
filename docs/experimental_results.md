@@ -2,55 +2,184 @@
 
 ## 1. Executive Summary
 
-Drive Guardian is a real-time, edge-capable Advanced Driver Assistance System (ADAS) leveraging dual-inference computer vision. This document outlines the performance, hardware optimizations, and mathematical heuristics used to achieve real-time latency on consumer-grade hardware (Nvidia RTX 4050 6GB).
+Drive Guardian is a real-time, edge-capable **Advanced Driver Assistance System (ADAS)** designed to run on consumer-grade hardware while maintaining practical inference speeds. The system leverages a **dual-model computer vision pipeline** to simultaneously detect road vehicles and understand lane geometry from dashcam footage.
 
-## 2. Model Architecture & Multi-Model Fusion
+The primary design objective was to create a **low-latency safety warning system** capable of running locally without requiring specialized sensors such as LiDAR or expensive depth-estimation modules. Instead, the system relies on **deterministic geometric heuristics and multi-model fusion** to derive safety signals directly from camera frames.
 
-To achieve robust safety warnings, the system runs two state-of-the-art neural networks simultaneously:
+All experiments and benchmarks were conducted on a system equipped with an **NVIDIA RTX 4050 GPU with 6GB VRAM**, demonstrating that real-time ADAS inference can be achieved without high-end workstation hardware.
 
-- **Object Detection:** Ultralytics YOLOv26 (`.pt`), utilizing PyTorch with CUDA 13.0 bindings.
-- **Lane Segmentation:** Ultra-Fast-Lane-Detection-V2 (UFLDv2 ResNet18), converted to `.onnx` and executed via `onnxruntime-gpu` (CUDA 12).
+---
 
-### 2.1 Multi-Model Fusion Logic
+# 2. Model Architecture & Multi-Model Fusion
 
-A critical achievement of this system is the elimination of false-positive collision warnings from adjacent lanes. This was achieved by fusing the outputs of both models:
+Drive Guardian relies on two specialized neural networks that run concurrently to extract complementary information from the input video stream.
 
-1. UFLDv2 extracts the ego-lane boundary coordinates `(x, y)`.
-2. YOLO detects vehicle bounding boxes `(x_min, y_min, x_max, y_max)`.
-3. The algorithm evaluates the bottom-center coordinate of the YOLO bounding box. Only vehicles whose bottom-center falls _between_ the left and right UFLD lane polynomials are flagged for Forward Collision Warning (FCW) analysis.
+### Object Detection Model
 
-## 3. Mathematical Safety Heuristics
+Vehicle detection is performed using **Ultralytics YOLOv26**, executed through **PyTorch with CUDA 13.0 acceleration**. This model processes each frame and outputs bounding boxes representing detected vehicles along with their spatial coordinates:
 
-Rather than relying on computationally expensive depth-estimation models (like MiDaS) or physical LiDAR sensors, Drive Guardian utilizes deterministic pixel-math to trigger ADAS warnings.
+- `x_min, y_min`
+- `x_max, y_max`
 
-### 3.1 Forward Collision Warning (FCW)
+These coordinates define the rectangular region containing the detected object in image space.
 
-- **Trigger Condition:** Relative Bounding Box Area > 15%
-- **Formula:** `(Box_Width * Box_Height) / (Frame_Width * Frame_Frame)`
-- **Logic:** As a vehicle approaches the dashcam lens, its relative pixel footprint scales exponentially. At a 15% threshold, the vehicle is deemed critically close, triggering a `WARNING: BRAKE!` flag.
+### Lane Detection Model
 
-### 3.2 Lane Departure Warning (LDW)
+Lane detection is performed using **Ultra-Fast-Lane-Detection-V2 (UFLDv2)** with a **ResNet-18 backbone**. The model was converted to the **ONNX format** and executed through **onnxruntime-gpu using CUDA 12**.
 
-- **Trigger Condition:** Center Hood Drift < 50 pixels
-- **Logic:** The system anchors the bottom-center of the frame `(Frame_Width / 2, Frame_Height)` as the vehicle's "hood". It then calculates the absolute horizontal distance to the lowest `(x, y)` points of the UFLD lane lines. If this delta drops below 50 pixels, the system triggers `WARNING: DRIFTING`.
+UFLDv2 does not directly output lane curves. Instead, it produces **ordinal classification matrices** which represent the likelihood of lane positions across predefined grid locations. These matrices are later converted into actual **lane coordinates (x, y)** through post-processing.
 
-## 4. Hardware Optimizations & VRAM Management
+By combining the outputs of both networks, the system gains awareness of both **vehicle positions** and **lane boundaries**, enabling contextual safety analysis.
 
-Running two deep learning models simultaneously on a 6GB VRAM GPU required strict memory management optimizations:
+---
 
-1.  **Framework Decoupling:** YOLO is executed natively in PyTorch, while UFLD is executed via ONNX Runtime. This prevents PyTorch from monopolizing the memory allocator.
-2.  **NumPy Post-Processing:** The UFLDv2 Softmax and Argmax operations were rewritten in pure NumPy. This bypasses PyTorch tensor allocation overhead, allowing the ONNX matrix to be resolved into `(x, y)` coordinates directly in system RAM, reserving the GPU strictly for matrix multiplication.
-3.  **Unified Native UI:** Moving from a React/WebSocket stack to a native `CustomTkinter` desktop application eliminated base64 encoding/decoding overhead, drastically reducing CPU usage and latency.
+## 2.1 Multi-Model Fusion Logic
 
-## 5. Performance Metrics (Benchmarked on RTX 4050 6GB)
+A major challenge in ADAS systems based purely on monocular vision is avoiding **false collision warnings** for vehicles that are visible in adjacent lanes but are not directly in the path of the ego vehicle.
 
-| Metric                     | Result  | Notes                                                   |
-| :------------------------- | :------ | :------------------------------------------------------ |
-| **Average FPS**            | `19`    | Measured across a 60-second 1080p dashcam video.        |
-| **YOLO Inference Latency** | `12ms`  | Time taken to generate bounding boxes.                  |
-| **UFLD Inference Latency** | `12ms`  | Time taken to generate ordinal classification matrices. |
-| **Total VRAM Usage**       | `1.1GB` | Peak memory allocated during dual-inference.            |
+Drive Guardian addresses this through a **geometric fusion step** that combines the outputs of YOLO and UFLDv2.
 
-## 6. Conclusion
+The fusion pipeline operates as follows:
 
-The Drive Guardian pipeline successfully demonstrates that high-accuracy, multi-sensor ADAS capabilities can be achieved on resource-constrained hardware using deterministic mathematical fusion and strict VRAM optimizations.
+1. **Lane boundaries** are extracted from UFLDv2 and represented as sets of **(x, y) coordinates** describing the left and right lane lines of the ego lane.
+2. **Vehicle detections** are obtained from YOLO in the form of bounding boxes.
+3. For each detected vehicle, the system computes the **bottom-center coordinate of the bounding box**:
+
+```
+x_center = (x_min + x_max) / 2
+y_bottom = y_max
+```
+
+4. This bottom-center point represents the **approximate contact point between the vehicle and the road surface** in the image.
+5. The algorithm checks whether this point lies **between the left and right ego-lane boundaries** estimated by UFLDv2.
+
+Only vehicles satisfying this spatial condition are considered **relevant for Forward Collision Warning (FCW)** analysis.
+
+This filtering step significantly reduces false alerts generated by vehicles traveling in neighboring lanes.
+
+---
+
+# 3. Mathematical Safety Heuristics
+
+Traditional ADAS systems frequently rely on **stereo cameras, LiDAR, or depth estimation networks** to estimate the distance between vehicles. These approaches can introduce significant computational overhead.
+
+Drive Guardian instead employs **deterministic pixel-based heuristics** derived from geometric properties of the camera image. These heuristics operate directly on bounding box sizes and lane coordinates, allowing safety warnings to be triggered without additional neural network inference.
+
+---
+
+## 3.1 Forward Collision Warning (FCW)
+
+Forward Collision Warning is triggered when a detected vehicle occupies a sufficiently large portion of the frame.
+
+### Trigger Condition
+
+```
+Relative Bounding Box Area > 15%
+```
+
+### Calculation
+
+```
+(Box_Width * Box_Height) / (Frame_Width * Frame_Height)
+```
+
+### Interpretation
+
+As a vehicle approaches the dashcam, its projected area in the image grows rapidly. This increase in pixel footprint is used as a proxy for decreasing physical distance.
+
+When the bounding box area exceeds **15% of the total frame area**, the system interprets the detected vehicle as being dangerously close to the ego vehicle and triggers the warning:
+
+**WARNING: BRAKE!**
+
+This heuristic avoids the need for explicit depth estimation while still capturing the visual cues associated with rapid vehicle approach.
+
+---
+
+## 3.2 Lane Departure Warning (LDW)
+
+Lane Departure Warning detects unintended drifting toward lane boundaries.
+
+### Trigger Condition
+
+```
+Center Hood Drift < 50 pixels
+```
+
+### Method
+
+The system defines the **bottom center of the frame** as a proxy for the position of the vehicle hood in the camera view:
+
+```
+(Frame_Width / 2, Frame_Height)
+```
+
+From this reference point, the algorithm computes the **horizontal distance** to the nearest points of the detected lane lines produced by UFLDv2.
+
+If the absolute difference between the vehicle center and the lane boundary drops below **50 pixels**, the system interprets this as a lane drift condition and generates the warning:
+
+**WARNING: DRIFTING**
+
+This method provides a lightweight approximation of vehicle positioning relative to lane boundaries.
+
+---
+
+# 4. Hardware Optimizations & VRAM Management
+
+Running two neural networks simultaneously on a **6GB VRAM GPU** requires careful memory management to prevent allocation conflicts and performance degradation.
+
+Several architectural decisions were made to ensure stable dual-inference operation.
+
+### Framework Decoupling
+
+The object detection model runs in **PyTorch**, while the lane detection model runs through **ONNX Runtime**.
+
+Separating the models across two frameworks prevents PyTorch from monopolizing the GPU memory allocator and allows more controlled GPU resource usage.
+
+---
+
+### NumPy-Based Post-Processing
+
+UFLDv2 outputs probability matrices that normally require **Softmax and Argmax operations**.
+
+Instead of performing these operations using PyTorch tensors, the system converts the matrices to **NumPy arrays** and processes them in **system RAM**.
+
+This optimization reduces unnecessary GPU tensor allocations and ensures that GPU resources remain dedicated to **neural network inference** rather than post-processing.
+
+---
+
+### Unified Native UI
+
+Earlier prototypes used a **React + WebSocket pipeline** for visualization. Frames had to be encoded and transmitted via **Base64**, introducing additional CPU overhead and latency.
+
+The system was later migrated to a **native desktop interface using CustomTkinter**, allowing direct frame rendering without serialization or network transfer.
+
+This significantly reduced CPU utilization and improved the responsiveness of the real-time visualization pipeline.
+
+---
+
+# 5. Performance Metrics  
+*(Benchmarked on RTX 4050 6GB)*
+
+| Metric | Result | Notes |
+|------|------|------|
+| Average FPS | 19 | Measured across a 60-second 1080p dashcam video |
+| YOLO Inference Latency | 12 ms | Time required to generate bounding box detections |
+| UFLD Inference Latency | 12 ms | Time required to generate lane classification matrices |
+| Total VRAM Usage | 1.1 GB | Peak memory usage during dual inference |
+
+These results demonstrate that both networks can operate concurrently within the memory limits of the GPU while maintaining near real-time frame processing.
+
+---
+
+# 6. Conclusion
+
+The Drive Guardian pipeline demonstrates that practical **ADAS-style safety monitoring** can be implemented using only a monocular camera and efficient computer vision models.
+
+By combining **vehicle detection**, **lane segmentation**, and **deterministic geometric heuristics**, the system provides collision and lane departure warnings without relying on specialized hardware or computationally expensive depth estimation.
+
+Through careful **framework separation, memory optimization, and efficient post-processing**, the system maintains stable real-time performance on a **consumer-grade RTX 4050 GPU with only 6GB VRAM**.
+
+The results highlight the feasibility of deploying lightweight ADAS solutions on widely accessible hardware platforms.
+
+
+# thank you
