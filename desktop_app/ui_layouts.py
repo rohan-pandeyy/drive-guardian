@@ -42,7 +42,7 @@ class DriveGuardianApp(ctk.CTk):
         self.lane_model_label = ctk.CTkLabel(self.sidebar_frame, text="Lane Model:")
         self.lane_model_label.grid(row=6, column=0, padx=20, pady=(10, 0), sticky="w")
         
-        self.lane_model_optionmenu = ctk.CTkOptionMenu(self.sidebar_frame, values=["UFLDv2 (ONNX)", "OpenCV (CPU)"],
+        self.lane_model_optionmenu = ctk.CTkOptionMenu(self.sidebar_frame, values=["OpenCV (GPU)", "UFLDv2 (ONNX)"],
                                                        command=self.change_lane_model_event)
         self.lane_model_optionmenu.grid(row=7, column=0, padx=20, pady=(0, 10))
         

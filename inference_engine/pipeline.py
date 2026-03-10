@@ -14,8 +14,8 @@ def get_object_detector():
     return detector
 
 def get_lane_detector():
-    # We will default to a UFLD onnx model
-    from .detectors.lane_detectors.ufld_runner import UFLDRunner
-    detector = UFLDRunner("models/ufldv2_tusimple_res18.onnx")
-    detector.load_model()
+    # Accelerate baseline OpenCV heuristics via GPU
+    from .detectors.lane_detectors.opencv_runner import OpenCVRunner
+    detector = OpenCVRunner()
+    detector.load_model("")
     return detector
