@@ -48,8 +48,8 @@ class VideoThread(threading.Thread):
 
     def change_lane_model(self, model_name: str):
         with self.source_lock:
-            if model_name == "OpenCV (CPU)":
-                print("[UI] Switching Lane model to: OpenCV CPU Heuristics")
+            if model_name == "OpenCV (GPU)":
+                print("[UI] Switching Lane model to: OpenCV GPU Heuristics")
                 from inference_engine.detectors.lane_detectors.opencv_runner import OpenCVRunner
                 self.lane_detector = OpenCVRunner()
                 self.lane_detector.load_model("")
