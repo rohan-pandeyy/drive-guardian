@@ -25,6 +25,8 @@ __pycache__
 *.sln
 *.sw?
 *.mp4
+.mypy_cache
+.pytest_cache
 
 # Machine Learning Models
 models/

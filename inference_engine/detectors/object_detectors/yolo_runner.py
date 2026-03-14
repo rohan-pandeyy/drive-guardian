@@ -1,6 +1,6 @@
 import torch
 from ultralytics import YOLO
-from .object_detector import ObjectDetector
+from .base_object import ObjectDetector
 from core.config import settings
 
 class YoloRunner(ObjectDetector):
@@ -9,7 +9,7 @@ class YoloRunner(ObjectDetector):
         self.model = None
         self.device = 'cpu'
         
-    def load_model(self, model_path: str = None):
+    def load_model(self, model_path: str = ""):
         if model_path:
             self.model_path = model_path
             

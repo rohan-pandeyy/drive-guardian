@@ -46,6 +46,19 @@ class VideoThread(threading.Thread):
         with self.source_lock:
             self.enable_lane_detection = state
 
+    def change_lane_model(self, model_name: str):
+        with self.source_lock:
+            if model_name == "OpenCV (GPU)":
+                print("[UI] Switching Lane model to: OpenCV GPU Heuristics")
+                from inference_engine.detectors.lane_detectors.opencv_runner import OpenCVRunner
+                self.lane_detector = OpenCVRunner()
+                self.lane_detector.load_model("")
+            else: # UFLDv2
+                print("[UI] Switching Lane model to: UFLDv2 (ONNX)")
+                from inference_engine.detectors.lane_detectors.ufld_runner import UFLDRunner
+                self.lane_detector = UFLDRunner("models/ufldv2_tusimple_res18.onnx")
+                self.lane_detector.load_model()
+
     def toggle_object_detection(self, state: bool):
         with self.source_lock:
             self.enable_object_detection = state
