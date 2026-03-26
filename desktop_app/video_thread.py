@@ -53,6 +53,11 @@ class VideoThread(threading.Thread):
                 from inference_engine.detectors.lane_detectors.opencv_runner import OpenCVRunner
                 self.lane_detector = OpenCVRunner()
                 self.lane_detector.load_model("")
+            elif model_name == "TwinLiteNet+ (Segmentation)":
+                print("[UI] Switching Lane model to: TwinLiteNet+ Medium")
+                from inference_engine.detectors.lane_detectors.twinlitenet_runner import TwinLiteNetRunner
+                self.lane_detector = TwinLiteNetRunner(model_version="medium")
+                self.lane_detector.load_model("models/twinlitenet_medium.pth")
             else: # UFLDv2
                 print("[UI] Switching Lane model to: UFLDv2 (ONNX)")
                 from inference_engine.detectors.lane_detectors.ufld_runner import UFLDRunner
