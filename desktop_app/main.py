@@ -76,6 +76,11 @@ def main():
         
     app.on_yolo_model_change_callback = handle_yolo_model_change
 
+    def handle_haze_change(value):
+        video_thread.change_haze_intensity(value)
+        
+    app.on_haze_change_callback = handle_haze_change
+
     # Graceful shutdown handling
     def on_closing():
         video_thread.stop()

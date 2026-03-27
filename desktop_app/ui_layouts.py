@@ -58,17 +58,25 @@ class DriveGuardianApp(ctk.CTk):
                                                        command=self.change_yolo_model_event)
         self.yolo_model_optionmenu.grid(row=10, column=0, padx=20, pady=(0, 10))
         
+        self.haze_label = ctk.CTkLabel(self.sidebar_frame, text="Haze/Fog Density:")
+        self.haze_label.grid(row=11, column=0, padx=20, pady=(10, 0), sticky="w")
+        
+        self.haze_slider = ctk.CTkSlider(self.sidebar_frame, from_=0.0, to=1.0, command=self.change_haze_event)
+        self.haze_slider.grid(row=12, column=0, padx=20, pady=(0, 10))
+        self.haze_slider.set(0.0)
+        
         self.latency_label = ctk.CTkLabel(self.sidebar_frame, text="Latency: -- ms", font=ctk.CTkFont(weight="bold"))
-        self.latency_label.grid(row=11, column=0, padx=20, pady=0, sticky="w")
+        self.latency_label.grid(row=13, column=0, padx=20, pady=0, sticky="w")
         
         self.fps_label = ctk.CTkLabel(self.sidebar_frame, text="FPS: --", font=ctk.CTkFont(weight="bold"))
-        self.fps_label.grid(row=12, column=0, padx=20, pady=10, sticky="w")
+        self.fps_label.grid(row=14, column=0, padx=20, pady=10, sticky="w")
         
         self.on_source_change_callback = None
         self.on_lane_toggle_callback = None
         self.on_lane_model_change_callback = None
         self.on_yolo_toggle_callback = None
         self.on_yolo_model_change_callback = None
+        self.on_haze_change_callback = None
         
         # -- Main Video Area --
         self.main_frame = ctk.CTkFrame(self, fg_color="black")
@@ -115,6 +123,10 @@ class DriveGuardianApp(ctk.CTk):
     def change_yolo_model_event(self, new_model_name: str):
         if self.on_yolo_model_change_callback:
             self.on_yolo_model_change_callback(new_model_name)
+
+    def change_haze_event(self, value: float):
+        if self.on_haze_change_callback:
+            self.on_haze_change_callback(value)
 
     def open_settings(self):
         print("Settings window placeholder")
