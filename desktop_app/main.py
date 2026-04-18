@@ -70,6 +70,11 @@ def main():
         video_thread.toggle_object_detection(state)
         
     app.on_yolo_toggle_callback = handle_yolo_toggle
+
+    def handle_dcp_dehaze_toggle(state):
+        video_thread.toggle_dcp_dehaze(state)
+
+    app.on_dcp_dehaze_toggle_callback = handle_dcp_dehaze_toggle
     
     def handle_yolo_model_change(model_name):
         video_thread.change_yolo_model(model_name)
@@ -80,6 +85,11 @@ def main():
         video_thread.change_haze_intensity(value)
         
     app.on_haze_change_callback = handle_haze_change
+
+    if settings.YOLO_ENABLE_DCP_DEHAZE:
+        app.dcp_dehaze_toggle.select()
+    else:
+        app.dcp_dehaze_toggle.deselect()
 
     # Graceful shutdown handling
     def on_closing():

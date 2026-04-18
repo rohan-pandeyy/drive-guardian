@@ -11,6 +11,7 @@ from inference_engine.pipeline import get_object_detector, get_lane_detector
 from inference_engine.features.lane_departure import LaneDepartureWarning
 from inference_engine.features.collision_warn import ForwardCollisionWarning
 from inference_engine.augmentations.haze_generator import HazeGenerator
+from inference_engine.preprocessing import dcp_dehaze
 from core.config import settings
 
 class VideoThread(threading.Thread):
@@ -22,6 +23,7 @@ class VideoThread(threading.Thread):
         self.source_changed = False
         self.enable_lane_detection = True
         self.enable_object_detection = True
+        self.enable_dcp_dehaze = settings.YOLO_ENABLE_DCP_DEHAZE
         self.source_lock = threading.Lock()
         
         self.haze_generator = HazeGenerator()
@@ -29,6 +31,8 @@ class VideoThread(threading.Thread):
         
         try:
             self.yolo_detector = get_object_detector()
+            if self.yolo_detector and hasattr(self.yolo_detector, "set_dcp_dehaze_enabled"):
+                self.yolo_detector.set_dcp_dehaze_enabled(self.enable_dcp_dehaze)
             self.lane_detector = get_lane_detector()
             self.ldw = LaneDepartureWarning(drift_threshold=50)
             self.fcw = ForwardCollisionWarning(critical_area_threshold=0.15)
@@ -72,11 +76,19 @@ class VideoThread(threading.Thread):
         with self.source_lock:
             self.enable_object_detection = state
 
+    def toggle_dcp_dehaze(self, state: bool):
+        with self.source_lock:
+            self.enable_dcp_dehaze = state
+            if self.yolo_detector and hasattr(self.yolo_detector, "set_dcp_dehaze_enabled"):
+                self.yolo_detector.set_dcp_dehaze_enabled(state)
+
     def change_yolo_model(self, model_filename: str):
         with self.source_lock:
             if self.yolo_detector:
                 print(f"[UI] Switching YOLO model to: models/{model_filename}")
                 self.yolo_detector.load_model(f"models/{model_filename}")
+                if hasattr(self.yolo_detector, "set_dcp_dehaze_enabled"):
+                    self.yolo_detector.set_dcp_dehaze_enabled(self.enable_dcp_dehaze)
 
     def change_haze_intensity(self, value: float):
         with self.source_lock:
@@ -117,6 +129,14 @@ class VideoThread(threading.Thread):
                 test_frame = self.haze_generator.apply_haze(frame, intensity=intensity)
             else:
                 test_frame = frame
+
+            with self.source_lock:
+                apply_dcp_dehaze = self.enable_dcp_dehaze
+
+            if apply_dcp_dehaze:
+                display_frame = dcp_dehaze(test_frame)
+            else:
+                display_frame = test_frame
                 
             # Target inference block
             inference_start = time.perf_counter()
@@ -124,18 +144,18 @@ class VideoThread(threading.Thread):
             # 1. Run Object Detection (GPU) conditionally
             yolo_results = None
             if self.enable_object_detection and self.yolo_detector:
-                yolo_results = self.yolo_detector.process_frame(test_frame)
+                yolo_results = self.yolo_detector.process_frame(display_frame, apply_dcp_dehaze=False)
             
             # 2. Run Lane Detection (GPU/ONNX) conditionally
             lane_results = None
             if self.enable_lane_detection and self.lane_detector:
-                lane_results = self.lane_detector.process_frame(test_frame)
+                lane_results = self.lane_detector.process_frame(display_frame)
             
             inference_end = time.perf_counter()
             latency_ms = int((inference_end - inference_start) * 1000)
             
             # 3. Combine Overlays and Compute ADAS Warnings
-            annotated_frame = self.draw_all_warnings(test_frame, yolo_results, lane_results)
+            annotated_frame = self.draw_all_warnings(display_frame, yolo_results, lane_results)
                 
             # Convert OpenCV BGR to RGB
             annotated_frame = cv2.cvtColor(annotated_frame, cv2.COLOR_BGR2RGB)
