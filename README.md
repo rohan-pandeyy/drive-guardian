@@ -31,6 +31,7 @@ Notes:
 
 - These options are applied when using a PyTorch `.pt` model via `YoloRunner`.
 - ONNX runtime paths are not affected by these toggles.
+- The desktop app also exposes a live `YOLO DCP Dehaze` switch so you can turn the preprocessing on or off without restarting.
 
 ### Dark Channel Prior (DCP) Dehazing
 

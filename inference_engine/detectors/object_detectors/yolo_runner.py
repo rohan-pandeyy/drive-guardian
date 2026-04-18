@@ -12,6 +12,9 @@ class YoloRunner(ObjectDetector):
         self.use_fuse = settings.YOLO_ENABLE_FUSE
         self.use_half = settings.YOLO_ENABLE_HALF
         self.use_dcp_dehaze = settings.YOLO_ENABLE_DCP_DEHAZE
+
+    def set_dcp_dehaze_enabled(self, enabled: bool):
+        self.use_dcp_dehaze = enabled
         
     def load_model(self, model_path: str = ""):
         if model_path:
@@ -37,11 +40,14 @@ class YoloRunner(ObjectDetector):
             print(f"Failed to load YOLO model: {e}")
             raise e
             
-    def process_frame(self, frame):
+    def process_frame(self, frame, apply_dcp_dehaze=None):
         if self.model is None:
             raise RuntimeError("Model is not loaded. Call load_model() first.")
 
-        if self.use_dcp_dehaze:
+        if apply_dcp_dehaze is None:
+            apply_dcp_dehaze = self.use_dcp_dehaze
+
+        if apply_dcp_dehaze:
             frame = dcp_dehaze(frame)
 
         use_half = self.use_half and self.device == 'cuda:0'
